@@ -115,11 +115,13 @@
 .auth-divider span { padding: 0 10px; }
 
 .auth-google-slot { display: flex; justify-content: center; min-height: 44px; }
-/* Google's rendered button lives inside an iframe it injects into this container — that iframe
-   sometimes carries its own white backdrop around the pill shape, which only reads as a visible
-   "white box" once it's sitting on this page's dark background. Clipping the wrapper to the same
-   pill radius crops off any stray white edge instead of trying to fight Google's own iframe styling. */
-.auth-google-slot > div { border-radius: 999px; overflow: hidden; }
+/* Google's rendered button lives inside an iframe it injects into this container — that iframe's
+   own intrinsic size is taller than the visible pill button itself (reserved space Google uses
+   internally), which otherwise reads as a white strip below the button once it's sitting on this
+   page's dark background: border-radius/overflow alone only clip by shape, not by height, so the
+   wrapper still grows to fit that extra iframe height unless explicitly capped. 40px matches
+   Google's own documented rendered height for size: 'large' (see GoogleSignInButton.jsx). */
+.auth-google-slot > div { height: 40px; border-radius: 999px; overflow: hidden; }
 .auth-google-slot .hint { color: rgba(255, 255, 255, 0.45); font-size: 12px; text-align: center; }
 
 .auth-error {
