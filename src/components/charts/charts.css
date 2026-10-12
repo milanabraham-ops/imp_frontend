@@ -1,0 +1,102 @@
+/* Chart chrome — built on the app's existing tokens so charts inherit the light/dark theme
+   automatically. Only the mark colors (categorical / ordinal) come from the validated
+   dataviz palette in chartTheme.js, since those need CVD-safe fixed hues. */
+
+.voicestack-form .chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.voicestack-form .chart-card:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+
+.voicestack-form .chart-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 12px;
+}
+
+.voicestack-form .chart-card-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.voicestack-form .chart-card-header .chart-sub {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.voicestack-form .chart-grid-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.voicestack-form .chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  color: var(--text3);
+  font-size: 13px;
+}
+
+/* Axis / grid — recessive hairlines, never dashed */
+.voicestack-form .chart-axis-line { stroke: var(--border2); stroke-width: 1; }
+.voicestack-form .chart-grid-line { stroke: var(--border); stroke-width: 1; }
+.voicestack-form .chart-tick-label { fill: var(--text3); font-size: 11px; }
+.voicestack-form .chart-value-label { fill: var(--text2); font-size: 11px; font-weight: 600; }
+
+/* Bars */
+.voicestack-form .chart-bar { transition: opacity 0.15s; cursor: pointer; }
+.voicestack-form .chart-bar:hover { opacity: 0.85; }
+.voicestack-form .chart-bar-label { fill: var(--text); font-size: 12px; }
+
+/* Donut */
+.voicestack-form .chart-donut-seg { transition: opacity 0.15s; cursor: pointer; }
+.voicestack-form .chart-donut-seg:hover { opacity: 0.85; }
+
+/* Radar */
+.voicestack-form .chart-radar-grid { fill: none; stroke: var(--border); stroke-width: 1; }
+.voicestack-form .chart-radar-axis-label { fill: var(--text2); font-size: 11px; }
+.voicestack-form .chart-radar-poly { fill-opacity: 0.12; stroke-width: 2; }
+.voicestack-form .chart-radar-dot { stroke: var(--surface); stroke-width: 2; cursor: pointer; }
+
+/* Legend */
+.voicestack-form .chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.voicestack-form .chart-legend-item { display: flex; align-items: center; gap: 6px; }
+.voicestack-form .chart-legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.voicestack-form .chart-legend-line { width: 14px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+
+/* Tooltip */
+.voicestack-form .chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-size: 12px;
+  box-shadow: var(--shadow);
+  z-index: 20;
+  white-space: nowrap;
+}
+.voicestack-form .chart-tooltip-value { color: var(--text); font-weight: 700; }
+.voicestack-form .chart-tooltip-label { color: var(--text3); margin-top: 2px; }
+.voicestack-form .chart-tooltip-row { display: flex; align-items: center; gap: 6px; }
+
+/* Time range filter — reuses the app's scope-toggle look */
+.voicestack-form .range-filter { display: flex; gap: 4px; }

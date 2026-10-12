@@ -1,0 +1,925 @@
+.voicestack-form {
+  --bg: #12151f;
+  --bg2: #0c0e15;
+  --bg3: #1b1f2c;
+  --surface: #171b28;
+  --text: #eef1f7;
+  --text2: #aab2c5;
+  --text3: #717a8f;
+  --border: #262b3b;
+  --border2: #333a4d;
+  --accent: #4c9bf5;
+  --accent-2: #2f6fd4;
+  --accent-light: rgba(76, 155, 245, 0.14);
+  --accent-hover: #6bb0ff;
+  --accent-ring: rgba(76, 155, 245, 0.25);
+  --success: #5cc95f;
+  --success-light: rgba(92, 201, 95, 0.12);
+  --success-border: rgba(92, 201, 95, 0.35);
+  --warning: #eab34d;
+  --warning-light: rgba(234, 179, 77, 0.14);
+  --warning-border: rgba(234, 179, 77, 0.35);
+  --danger: #f0716e;
+  --danger-light: rgba(240, 113, 110, 0.12);
+  --danger-border: rgba(240, 113, 110, 0.35);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.25);
+  --shadow-modal: 0 8px 30px rgba(0, 0, 0, 0.25);
+
+  /* Brand mark color, lifted from the logo (the violet square) — used for the sidebar's
+     gradient wash and its own nav highlight, kept separate from --accent so the rest of the
+     app's blue interactive color is untouched. */
+  --brand-rgb: 74, 60, 225;
+  --brand-text: #9b8cf9;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: var(--bg2);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.voicestack-form[data-theme='light'] {
+  --bg: #ffffff;
+  --bg2: #f8f9fa;
+  --bg3: #f1f3f5;
+  --surface: #ffffff;
+  --text: #1a1a2e;
+  --text2: #4a5568;
+  --text3: #718096;
+  --border: #e2e8f0;
+  --border2: #cbd5e0;
+  --accent: #185fa5;
+  --accent-2: #0c447c;
+  --accent-light: #ebf4ff;
+  --accent-hover: #0c447c;
+  --accent-ring: rgba(24, 95, 165, 0.14);
+  --success: #3b6d11;
+  --success-light: #eaf3de;
+  --success-border: #c0dfa0;
+  --danger: #a32d2d;
+  --danger-light: #fdf0f0;
+  --danger-border: #f0c0c0;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --brand-text: #4a3ce1;
+}
+
+.voicestack-form *,
+.voicestack-form *::before,
+.voicestack-form *::after {
+  box-sizing: border-box;
+}
+
+.voicestack-form .page-wrap {
+  width: 96%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Card */
+.voicestack-form .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.voicestack-form .card-header {
+  background: var(--surface);
+  padding: 1.5rem 2rem;
+  color: var(--text);
+}
+.voicestack-form .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.voicestack-form .brand img { display: none; }
+.voicestack-form .brand img.brand-logo-dark { display: block; }
+.voicestack-form[data-theme='light'] .brand img.brand-logo-dark { display: none; }
+.voicestack-form[data-theme='light'] .brand img.brand-logo-light { display: block; }
+.voicestack-form .card-header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+.voicestack-form .card-header p { font-size: 14px; color: var(--text2); margin: 0; }
+.voicestack-form .card-body { padding: 2rem; }
+
+/* Progress */
+.voicestack-form .progress-wrap { margin-bottom: 2rem; }
+.voicestack-form .progress-bar { display: flex; align-items: center; margin-bottom: .5rem; }
+.voicestack-form .step-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  border: 2px solid var(--border2);
+  background: var(--surface);
+  color: var(--text3);
+  flex-shrink: 0;
+  z-index: 1;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.voicestack-form .step-dot:hover { border-color: var(--accent); color: var(--accent); }
+.voicestack-form .step-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.voicestack-form .step-dot.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.voicestack-form .step-dot.active:hover { filter: brightness(1.1); color: #fff; }
+.voicestack-form .step-dot.done { background: var(--success); color: #fff; border-color: var(--success); }
+.voicestack-form .step-dot.done:hover { filter: brightness(1.1); color: #fff; }
+.voicestack-form .step-dot.done i { font-size: 14px; }
+.voicestack-form .step-line { flex: 1; height: 2px; background: var(--border); transition: background-color .2s ease; }
+.voicestack-form .step-line.done { background: var(--success); }
+.voicestack-form .step-labels { display: flex; justify-content: space-between; }
+.voicestack-form .step-labels span { font-size: 10px; color: var(--text3); text-align: center; width: 30px; white-space: nowrap; cursor: pointer; }
+.voicestack-form .step-labels span:hover { color: var(--text2); }
+.voicestack-form .step-labels span.active { color: var(--accent); font-weight: 600; }
+
+/* Section */
+.voicestack-form .section-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.voicestack-form .section-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.5; }
+.voicestack-form .subsection-title { font-size: 15px; font-weight: 600; color: var(--text); margin: 1.25rem 0 .75rem; padding-bottom: .4rem; border-bottom: 1px solid var(--border); }
+
+/* Fields */
+.voicestack-form .field { margin-bottom: 1.1rem; }
+.voicestack-form .field > label {
+  display: block; font-size: 14px; font-weight: 500;
+  color: var(--text); margin-bottom: 5px;
+}
+.voicestack-form .req { color: var(--danger); }
+.voicestack-form .hint { font-size: 12px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
+
+.voicestack-form input[type=text], .voicestack-form input[type=number], .voicestack-form input[type=email],
+.voicestack-form input[type=url], .voicestack-form input[type=date], .voicestack-form input[type=time],
+.voicestack-form textarea, .voicestack-form select, .voicestack-form .select-input-trigger {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color .15s;
+  outline: none;
+}
+.voicestack-form input::placeholder, .voicestack-form textarea::placeholder { color: var(--text3); }
+.voicestack-form input:focus, .voicestack-form textarea:focus, .voicestack-form select:focus,
+.voicestack-form .select-input-trigger:focus {
+  border-color: var(--accent);
+}
+.voicestack-form textarea { min-height: 85px; resize: vertical; }
+.voicestack-form select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
+
+.voicestack-form .combobox-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+}
+.voicestack-form .combobox-input:disabled { opacity: .6; cursor: not-allowed; background-image: none; padding-right: 12px; }
+
+/* SelectInput's trigger is a <button>, unlike ComboBoxInput's <input> — browsers give buttons
+   their own default chrome (flat grey background, faint border) that a plain class selector
+   can't override unless the button is explicitly included in the rules that set it, which is why
+   .select-input-trigger is added directly into the base field rule and its :focus variant above,
+   rather than relying on .combobox-input/.inline-edit-select alone (those only ever added the
+   chevron/sizing on top of a base an <input>/<select> already had for free — a <button> never
+   did). This block just resets the remaining structural button quirks (centered text, no width,
+   no font inheritance) that those rules don't cover. */
+.voicestack-form .select-input-trigger {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.voicestack-form .select-input-trigger:disabled { cursor: not-allowed; }
+.voicestack-form .select-input-placeholder { color: var(--text3); }
+.voicestack-form .combobox-menu {
+  /* position/top/left/minWidth are set inline (see useDropdown.js) — computed from the trigger's
+     actual on-screen position via getBoundingClientRect(), since this renders through a portal. */
+  z-index: 1500;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+  padding: 4px;
+}
+.voicestack-form .combobox-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.voicestack-form .combobox-option:hover, .voicestack-form .combobox-option.highlighted { background: var(--bg3); }
+.voicestack-form .combobox-option.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+
+/* Grid */
+.voicestack-form .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Radio / Checkbox */
+.voicestack-form .radio-group { display: flex; flex-direction: column; gap: 7px; }
+.voicestack-form .radio-group.row { flex-direction: row; gap: 10px; }
+.voicestack-form .radio-group.row label { flex: 1; }
+.voicestack-form .radio-group label, .voicestack-form .check-group label {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 400; color: var(--text);
+  cursor: pointer; padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color .15s;
+}
+.voicestack-form .radio-group label:hover, .voicestack-form .check-group label:hover { border-color: var(--border2); }
+.voicestack-form .radio-group label.sel, .voicestack-form .check-group label.sel { border-color: var(--accent); }
+.voicestack-form .radio-group label.disabled, .voicestack-form .check-group label.disabled { cursor: not-allowed; opacity: .6; }
+.voicestack-form .radio-group input[type=radio], .voicestack-form .check-group input[type=checkbox] {
+  accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0;
+}
+.voicestack-form .check-group { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+/* New submission entry choice */
+.voicestack-form .entry-choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.voicestack-form .entry-choice-card {
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+  gap: 6px; padding: 1.5rem; border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  background: var(--bg); cursor: pointer; font-family: inherit; transition: border-color .15s, background .15s;
+}
+.voicestack-form .entry-choice-card:hover { border-color: var(--accent); background: var(--accent-light); }
+.voicestack-form .entry-choice-card i { font-size: 26px; color: var(--accent); margin-bottom: 4px; }
+.voicestack-form .entry-choice-card h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 0; }
+.voicestack-form .entry-choice-card p { font-size: 13px; color: var(--text2); margin: 0; line-height: 1.5; }
+.voicestack-form .entry-group-form { max-width: 460px; }
+
+/* Divider */
+.voicestack-form .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+/* Repeatable ring group card (Step 5) */
+.voicestack-form .ring-group-card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.25rem; margin-bottom: 1.25rem; background: var(--surface);
+}
+.voicestack-form .ring-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .5rem;
+}
+.voicestack-form .ring-group-header h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 0; }
+.voicestack-form .check-inline {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2);
+  margin-bottom: .75rem; cursor: pointer;
+}
+.voicestack-form .check-inline input[type=checkbox],
+.voicestack-form .show-own-toggle input[type=checkbox] {
+  accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer;
+}
+
+/* Info box */
+.voicestack-form .info-box {
+  background: var(--accent-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.voicestack-form .info-box i { color: var(--accent); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.voicestack-form .info-box.error { background: var(--danger-light); border-color: var(--danger-border); color: var(--danger); }
+.voicestack-form .info-box.error i { color: var(--danger); }
+
+/* Buttons */
+.voicestack-form .btn, .voicestack-form .btn-sm, .voicestack-form .btn-drive {
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+  outline: none;
+}
+.voicestack-form .btn:focus-visible, .voicestack-form .btn-sm:focus-visible, .voicestack-form .btn-drive:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.voicestack-form .btn {
+  padding: 9px 20px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 500; font-family: inherit;
+  cursor: pointer; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text);
+  transition: background-color .15s, border-color .15s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.voicestack-form .btn:hover, .voicestack-form .btn:active { background: var(--bg2); }
+.voicestack-form .btn:disabled { opacity: .4; cursor: not-allowed; }
+.voicestack-form .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.voicestack-form .btn-primary:hover:not(:disabled), .voicestack-form .btn-primary:active:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+.voicestack-form .btn-sm {
+  padding: 4px 10px; font-size: 12px; border-radius: var(--radius);
+  cursor: pointer; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text); font-family: inherit;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.voicestack-form .btn-sm:hover, .voicestack-form .btn-sm:active { background: var(--bg2); }
+.voicestack-form .btn-sm.danger { color: var(--danger); border-color: var(--danger-border); }
+.voicestack-form .btn-sm.danger:hover { background: var(--danger-light); }
+.voicestack-form .btn-drive {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; font-family: inherit;
+  cursor: pointer; border: 1px solid var(--border2);
+  background: var(--accent-light); color: var(--accent);
+  transition: background-color .15s, border-color .15s;
+}
+.voicestack-form .btn-drive:hover, .voicestack-form .btn-drive:active { background: var(--accent-ring); border-color: var(--accent); }
+.voicestack-form .btn-drive i { font-size: 16px; }
+
+/* Nav */
+.voicestack-form .nav-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.voicestack-form .step-counter { font-size: 13px; color: var(--text3); }
+
+/* Upload row */
+.voicestack-form .upload-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.voicestack-form .upload-fname { font-size: 12px; color: var(--text3); font-style: italic; }
+
+/* Mon-Fri toggle */
+.voicestack-form .monfri-label {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 14px; font-weight: 500; color: var(--accent);
+  cursor: pointer; padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent-light);
+  margin-bottom: 8px;
+}
+.voicestack-form .monfri-label input { accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
+
+/* Auto-selected tag */
+.voicestack-form .auto-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; padding: 5px 12px; border-radius: 20px;
+  background: var(--success-light); color: var(--success);
+  border: 1px solid var(--success-border); font-weight: 500;
+}
+
+/* Success */
+.voicestack-form .success-screen { text-align: center; padding: 3rem 1rem; }
+.voicestack-form .success-icon {
+  width: 60px; height: 60px; background: var(--success-light);
+  border: 1px solid var(--success-border);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; margin: 0 auto 1.25rem;
+  font-size: 30px; color: var(--success);
+}
+.voicestack-form .success-screen h2 { font-size: 20px; color: var(--text); margin-bottom: 8px; }
+.voicestack-form .success-screen p { font-size: 14px; color: var(--text2); margin: 0; line-height: 1.5; }
+
+/* Submitting overlay */
+.voicestack-form .submitting-overlay {
+  display: flex; position: fixed; inset: 0;
+  background: rgba(0, 0, 0, .4);
+  z-index: 999;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px;
+}
+.voicestack-form .submitting-text {
+  background: var(--surface); padding: 8px 18px; border-radius: var(--radius);
+  font-size: 14px; color: var(--text2); font-weight: 500;
+}
+.voicestack-form .spinner {
+  width: 36px; height: 36px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: voicestack-spin .7s linear infinite;
+}
+@keyframes voicestack-spin { to { transform: rotate(360deg); } }
+
+/* Confirm dialog */
+.voicestack-form .confirm-dialog-overlay {
+  display: flex; position: fixed; inset: 0;
+  background: rgba(0, 0, 0, .4);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+  padding: 16px;
+}
+.voicestack-form .confirm-dialog {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 22px; max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-modal);
+}
+.voicestack-form .confirm-dialog-title { font-size: 16px; font-weight: 600; color: var(--text); margin: 0 0 8px; }
+.voicestack-form .confirm-dialog-message { font-size: 13px; color: var(--text2); margin: 0 0 18px; line-height: 1.5; }
+.voicestack-form .confirm-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+.voicestack-form .confirm-dialog.detail-modal {
+  max-width: 720px; max-height: 85vh; display: flex; flex-direction: column;
+}
+.voicestack-form .detail-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  flex-shrink: 0;
+}
+.voicestack-form .detail-modal-sub { font-size: 13px; color: var(--text2); margin: 0 0 14px; }
+.voicestack-form .detail-modal-body { overflow-y: auto; flex: 1; margin: 0 -4px; padding: 0 4px; }
+
+.voicestack-form .confirm-dialog.integration-edit-modal {
+  max-width: 560px; max-height: 85vh; display: flex; flex-direction: column;
+}
+.voicestack-form .integration-edit-modal-body { overflow-y: auto; flex: 1; margin: 0 -4px; padding: 0 4px; }
+
+/* QA Checklist */
+.voicestack-form .qa-checklist-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 0; border-bottom: 1px dashed var(--border);
+}
+.voicestack-form .qa-checklist-row:last-child { border-bottom: none; }
+.voicestack-form .qa-checklist-item-name { flex: 1; min-width: 160px; font-size: 13px; font-weight: 500; color: var(--text); }
+.voicestack-form .qa-checklist-choices { display: flex; gap: 6px; flex-shrink: 0; }
+.voicestack-form .qa-checklist-choice {
+  width: 30px; height: 30px; border-radius: var(--radius); padding: 0;
+  border: 1px solid var(--border2); background: var(--bg); color: var(--text3);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  font-size: 15px; font-family: inherit;
+  transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+}
+.voicestack-form .qa-checklist-choice:hover { border-color: var(--text3); color: var(--text2); }
+.voicestack-form .qa-checklist-choice.ok.active { background: var(--success-light); border-color: var(--success-border); color: var(--success); }
+.voicestack-form .qa-checklist-choice.error.active { background: var(--danger-light); border-color: var(--danger-border); color: var(--danger); }
+.voicestack-form .qa-checklist-choice.clarification.active { background: var(--warning-light); border-color: var(--warning-border); color: var(--warning); }
+.voicestack-form .qa-checklist-choice.na.active { background: var(--bg3); border-color: var(--text3); color: var(--text2); }
+.voicestack-form .qa-checklist-note { flex-basis: 100%; min-height: 50px; font-size: 13px; }
+.voicestack-form .qa-checklist-add-row { display: flex; gap: 8px; margin-top: 12px; }
+.voicestack-form .qa-checklist-add-row .inline-edit-input { flex: 1; min-width: 0; }
+
+/* Review */
+.voicestack-form .review-section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.voicestack-form .review-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.voicestack-form .review-section-header h3 { font-size: 14px; font-weight: 600; margin: 0; color: var(--text); }
+.voicestack-form .review-list { display: flex; flex-direction: column; }
+.voicestack-form .review-row {
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+  padding: 6px 0; font-size: 13px;
+  border-bottom: 1px dashed var(--border);
+}
+.voicestack-form .review-row:last-child { border-bottom: none; }
+.voicestack-form .review-label { color: var(--text3); min-width: 220px; flex-shrink: 0; }
+.voicestack-form .review-value { color: var(--text); flex: 1; min-width: 0; word-break: break-word; white-space: pre-line; }
+.voicestack-form .review-value.empty { color: var(--text3); font-style: italic; }
+.voicestack-form .review-value a { color: var(--accent); text-decoration: underline; }
+.voicestack-form .review-value a:hover { color: var(--accent-hover); }
+
+/* Comment thread */
+.voicestack-form .comment-list { display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto; margin-bottom: 12px; }
+.voicestack-form .comment-row { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.voicestack-form .comment-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.voicestack-form .comment-author { font-size: 13px; font-weight: 600; color: var(--text); }
+.voicestack-form .comment-role-badge {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em;
+  padding: 1px 7px; border-radius: 20px; background: var(--bg3); color: var(--text3);
+}
+.voicestack-form .comment-time { font-size: 11px; color: var(--text3); margin-left: auto; }
+.voicestack-form .comment-text { font-size: 13px; color: var(--text2); white-space: pre-wrap; word-break: break-word; }
+.voicestack-form .comment-add-row { display: flex; gap: 8px; align-items: flex-end; }
+.voicestack-form .comment-input { flex: 1; min-height: 44px; resize: vertical; }
+
+.voicestack-form .forwarding-numbers-textarea { width: 100%; min-height: 70px; resize: vertical; font-family: inherit; }
+.voicestack-form .forwarding-numbers-compact .forwarding-numbers-textarea { min-height: 44px; font-size: 12px; }
+.voicestack-form .forwarding-numbers-cell { white-space: normal; min-width: 220px; max-width: 320px; vertical-align: top; }
+
+/* Dashboard */
+.voicestack-form .dash-empty {
+  text-align: center; padding: 3rem 1rem; color: var(--text3);
+}
+
+/* Sidebar shell */
+.voicestack-form.dash-shell {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  min-height: 100vh;
+}
+.voicestack-form .dash-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  /* Brand-colored regardless of light/dark theme — the sidebar is a fixed brand element,
+     lifted straight from the logo's violet square, with just a slight gradient across it. */
+  background: linear-gradient(165deg, #241f42 0%, #322a5e 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.25rem;
+}
+.voicestack-form .dash-sidebar-brand { margin-bottom: 2rem; font-weight: 600; }
+.voicestack-form .dash-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.voicestack-form .dash-nav-item {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius);
+  color: rgba(255, 255, 255, 0.75); font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none; background: none; font-family: inherit;
+  transition: background-color .15s ease, color .15s ease;
+  width: 100%; text-align: left; text-decoration: none;
+}
+.voicestack-form .dash-nav-item:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.voicestack-form .dash-nav-item.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-weight: 600;
+}
+.voicestack-form .dash-nav-item.active:hover { background: rgba(255, 255, 255, 0.2); }
+.voicestack-form .dash-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -1.25rem;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #fff;
+}
+.voicestack-form .dash-nav-item i { font-size: 17px; flex-shrink: 0; }
+.voicestack-form .dash-nav-badges { display: flex; gap: 5px; margin-left: auto; flex-shrink: 0; }
+.voicestack-form .dash-nav-badge {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff8a8d, #e5484d 55%, #c72e33);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+.voicestack-form .dash-nav-badge.comment {
+  background: radial-gradient(circle at 30% 30%, #8dffb0, #35c46a 55%, #1f8f4a);
+}
+/* Same dots, inline in a table row — so someone scanning the list can tell exactly which row
+   triggered the sidebar badge, instead of just knowing "something" changed. */
+.voicestack-form .row-badges { display: inline-flex; gap: 4px; margin-right: 7px; vertical-align: middle; }
+
+/* The sidebar is always violet regardless of theme, so it always needs the light-text logo —
+   independent of the light/dark logo swap used on the auth pages' own (non-colored) .brand. */
+.voicestack-form .dash-sidebar-brand img.brand-logo-light { display: none; }
+.voicestack-form[data-theme='light'] .dash-sidebar-brand img.brand-logo-dark { display: block; }
+.voicestack-form[data-theme='light'] .dash-sidebar-brand img.brand-logo-light { display: none; }
+.voicestack-form .dash-main { flex: 1; min-width: 0; height: 100vh; overflow: hidden; }
+.voicestack-form .dash-main-scroll,
+.voicestack-form .dash-main-scroll > .custom-scrollbar-viewport { height: 100%; }
+.voicestack-form .dash-main-scroll > .custom-scrollbar-viewport { padding: 2rem 2.5rem; }
+
+/* Custom scrollbar (native ::-webkit-scrollbar customization is unreliable across browsers/OS
+   scrollbar themes — arrows and thickness aren't consistently overridable — so scroll position is
+   mirrored onto a div-based thumb instead, and the native scrollbar is hidden entirely). */
+.voicestack-form .custom-scrollbar-wrap { position: relative; }
+.voicestack-form .custom-scrollbar-viewport {
+  width: 100%; overflow: auto;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.voicestack-form .custom-scrollbar-viewport::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.voicestack-form .custom-scrollbar-track { position: absolute; z-index: 5; }
+.voicestack-form .custom-scrollbar-track-v { top: 2px; bottom: 2px; right: 2px; width: 8px; }
+.voicestack-form .custom-scrollbar-track-h { left: 2px; right: 2px; bottom: 2px; height: 8px; }
+.voicestack-form .custom-scrollbar-thumb {
+  position: absolute; border-radius: 8px; background: var(--scrollbar-thumb, #b0b6c3);
+  cursor: pointer; transition: background .15s;
+}
+.voicestack-form .custom-scrollbar-thumb:hover,
+.voicestack-form .custom-scrollbar-thumb.dragging { background: var(--scrollbar-thumb-hover, #cdd2db); }
+.voicestack-form .custom-scrollbar-thumb-v { width: 8px; left: 0; }
+.voicestack-form .custom-scrollbar-thumb-h { height: 8px; top: 0; }
+.voicestack-form .dash-userbar {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px; margin-bottom: 1.5rem; font-size: 13px; color: var(--text2); flex-wrap: wrap;
+}
+
+/* Avatar */
+.voicestack-form .avatar-img { border-radius: 50%; object-fit: cover; display: block; }
+.voicestack-form .avatar-fallback {
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgb(var(--brand-rgb)), var(--accent)); color: #fff; font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Account menu */
+.voicestack-form .account-menu { position: relative; }
+.voicestack-form .account-menu-trigger {
+  display: flex; align-items: center; padding: 2px; border-radius: 50%;
+  border: 1px solid var(--border2); background: var(--surface); cursor: pointer;
+  transition: border-color .15s;
+}
+.voicestack-form .account-menu-trigger:hover { border-color: var(--accent); }
+.voicestack-form .account-menu-panel {
+  position: absolute; top: calc(100% + 10px); right: 0; z-index: 50;
+  width: 260px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-popover);
+  padding: 1.25rem 1rem 0.75rem; text-align: center;
+}
+.voicestack-form .account-menu-header { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 0.75rem; }
+.voicestack-form .account-menu-avatar-wrap { position: relative; display: inline-flex; margin-bottom: 4px; }
+.voicestack-form .account-menu-avatar-wrap .avatar-fallback { font-size: 22px; }
+.voicestack-form .account-menu-avatar-edit {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 22px; height: 22px; padding: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: #fff; border: 2px solid var(--surface);
+  cursor: pointer; font-size: 12px; line-height: 1;
+  transition: background-color .15s;
+}
+.voicestack-form .account-menu-avatar-edit i { font-size: 12px; }
+.voicestack-form .account-menu-avatar-edit:hover { background: var(--accent-hover); }
+.voicestack-form .account-menu-avatar-edit:disabled { opacity: .7; cursor: not-allowed; }
+.voicestack-form .account-menu-avatar-edit .ti-loader-2 { animation: voicestack-spin .7s linear infinite; }
+.voicestack-form .account-menu-greeting { font-size: 15px; font-weight: 600; color: var(--text); }
+.voicestack-form .account-menu-email { font-size: 12px; color: var(--text3); word-break: break-all; }
+.voicestack-form .account-menu-divider { height: 1px; background: var(--border); margin: 0.5rem -1rem; }
+.voicestack-form .account-menu-item {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 9px 8px; border: none; background: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; color: var(--text2); font-family: inherit;
+  cursor: pointer; text-align: left; transition: background-color .15s, color .15s;
+}
+.voicestack-form .account-menu-item:hover { background: var(--bg3); color: var(--text); }
+.voicestack-form .account-menu-item.danger { color: var(--danger); margin-bottom: 0.5rem; }
+.voicestack-form .account-menu-item.danger:hover { background: var(--danger-light); }
+.voicestack-form .account-menu-error { color: var(--danger); font-size: 11px; margin-top: 6px; }
+.voicestack-form .dash-main-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.voicestack-form .dash-main-header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.voicestack-form .dash-main-header h1 { font-size: 20px; font-weight: 600; color: var(--text); margin: 0 0 4px; }
+.voicestack-form .dash-main-header p { font-size: 13px; color: var(--text2); margin: 0; }
+
+.voicestack-form .dash-stats-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: stretch; }
+.voicestack-form .stat-tile {
+  flex: 1; min-width: 170px;
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.voicestack-form .stat-tile:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+.voicestack-form .stat-tile-clickable {
+  font: inherit; text-align: left; cursor: pointer;
+}
+.voicestack-form .stat-tile-clickable:hover { border-color: var(--accent); }
+.voicestack-form .stat-tile-body { min-width: 0; }
+.voicestack-form .stat-tile-icon {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.voicestack-form .stat-tile-icon.tone-accent { background: var(--accent-light); color: var(--accent); }
+.voicestack-form .stat-tile-icon.tone-success { background: var(--success-light); color: var(--success); }
+.voicestack-form .stat-tile-icon.tone-warning { background: var(--warning-light); color: var(--warning); }
+.voicestack-form .stat-tile-icon.tone-danger { background: var(--danger-light); color: var(--danger); }
+.voicestack-form .stat-tile-icon.tone-brand { background: rgba(var(--brand-rgb), 0.14); color: var(--brand-text); }
+.voicestack-form .stat-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.voicestack-form .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+.voicestack-form .dash-table-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.voicestack-form .dash-table-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.voicestack-form .dash-search {
+  display: flex; align-items: center; gap: 8px; flex: 1; max-width: 360px;
+  border: 1px solid var(--border2); border-radius: var(--radius); padding: 0 10px;
+  background: var(--bg);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.voicestack-form .dash-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+.voicestack-form .dash-search i { color: var(--text3); font-size: 15px; }
+.voicestack-form .dash-search input {
+  border: none; background: transparent; padding: 8px 0; font-size: 13px;
+  color: var(--text); outline: none; width: 100%;
+}
+.voicestack-form .dash-count-label { font-size: 12px; color: var(--text3); white-space: nowrap; }
+
+/* Integration Docs */
+.voicestack-form .pms-doc-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, 200px); gap: 1rem;
+  padding: 1.25rem;
+}
+.voicestack-form .pms-doc-card {
+  width: 200px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 0.85rem 0.9rem; display: flex; flex-direction: column; gap: 8px;
+  text-decoration: none; color: inherit;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+.voicestack-form .pms-doc-card-title {
+  display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text);
+}
+.voicestack-form .pms-doc-card-title i { color: var(--accent); font-size: 15px; flex-shrink: 0; }
+/* Purely decorative — just the first page, shrunk to fit, not something to scroll or click inside
+   (the real thing opens in the new tab the card itself links to). The wrap clips anything beyond
+   it; the iframe inside renders at a generous natural size — large enough that the embedded
+   viewer doesn't need its own scrollbars to show one page — then the whole rendered result is
+   scaled down as a single visual unit via transform: scale(), not resized/reflowed, so there's
+   nothing left for it to scroll. The wrap's aspect ratio is shorter than an actual 8.5:11 page
+   (9.5 tall, not 11) specifically to crop out the gap/start of page two that bled in at a true
+   page ratio — a deliberate slight crop of page one's own bottom margin, not a mistake. 170px/
+   1000px = the 0.17 scale below; keep both in sync if either changes. */
+.voicestack-form .pms-doc-card-frame-wrap {
+  width: 170px; aspect-ratio: 8.5 / 9.5; position: relative; overflow: hidden;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+}
+.voicestack-form .pms-doc-card-frame {
+  position: absolute; top: 0; left: 0; width: 1000px; height: 1118px;
+  transform: scale(0.17); transform-origin: top left;
+  border: none; pointer-events: none;
+}
+
+.voicestack-form .scope-toggle {
+  display: flex; gap: 6px;
+}
+.voicestack-form .scope-toggle-btn {
+  border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text2);
+  font-size: 12px; font-weight: 500;
+  padding: 7px 14px; cursor: pointer; transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.voicestack-form .scope-toggle-btn:hover:not(.active) { background: var(--bg3); color: var(--text); border-color: var(--text3); }
+.voicestack-form .scope-toggle-btn.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent-ring); }
+
+.voicestack-form .show-own-toggle {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2);
+  white-space: nowrap; cursor: pointer; transition: color .15s ease;
+}
+.voicestack-form .show-own-toggle:hover { color: var(--text); }
+.voicestack-form .you-badge {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em;
+  background: var(--accent-light); color: var(--accent);
+}
+.voicestack-form .link-btn {
+  background: none; border: none; padding: 0; color: var(--accent); font-size: 13px;
+  font-weight: 500; text-decoration: underline; cursor: pointer;
+}
+
+.voicestack-form .dash-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.voicestack-form .dash-table th {
+  text-align: left; padding: 10px 1.25rem; font-size: 11px; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--text3); border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; user-select: none;
+}
+.voicestack-form .dash-table th:hover { color: var(--text2); }
+.voicestack-form .dash-table td { padding: 12px 1.25rem; border-bottom: 1px solid var(--border); color: var(--text); white-space: nowrap; }
+.voicestack-form .dash-table tbody tr:last-child td { border-bottom: none; }
+.voicestack-form .dash-table tbody tr:hover { background: var(--bg3); }
+.voicestack-form .dash-table th:last-child,
+.voicestack-form .dash-table td:last-child { padding-right: 1.5rem; }
+.voicestack-form .dash-table-actions { text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+
+.voicestack-form .add-location-panel { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.voicestack-form .add-location-panel select { width: auto; padding: 7px 28px 7px 10px; font-size: 13px; }
+.voicestack-form .add-location-panel .select-input-trigger { width: auto; padding: 7px 28px 7px 10px; font-size: 13px; }
+.voicestack-form .btn-sm.disabled { opacity: .5; pointer-events: none; }
+.voicestack-form .group-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+  background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-ring);
+}
+.voicestack-form .status-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  background: var(--bg3); color: var(--text2); border: 1px solid var(--border2);
+}
+.voicestack-form .status-badge.hold { background: var(--danger-light); color: var(--danger); border-color: var(--danger-border); }
+
+.voicestack-form .inline-edit-input, .voicestack-form .inline-edit-select {
+  border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg);
+  color: var(--text); font-size: 13px; padding: 6px 10px; min-width: 140px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.voicestack-form .inline-edit-input:hover:not(:disabled), .voicestack-form .inline-edit-select:hover:not(:disabled) { border-color: var(--text3); }
+.voicestack-form .inline-edit-input:focus, .voicestack-form .inline-edit-select:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring);
+}
+.voicestack-form .inline-edit-input:disabled, .voicestack-form .inline-edit-select:disabled { opacity: .6; cursor: not-allowed; }
+.voicestack-form .inline-edit-select.hold { border-color: var(--danger-border); color: var(--danger); }
+.voicestack-form .inline-edit-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+.voicestack-form .add-user-panel { padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.voicestack-form .add-user-fields { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.voicestack-form .add-user-fields .inline-edit-input, .voicestack-form .add-user-fields .inline-edit-select { min-width: 160px; }
+
+/* Settings panels (Admin Settings) */
+.voicestack-form .settings-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.25rem; margin-bottom: 1.25rem;
+}
+.voicestack-form .settings-panel-header { margin-bottom: 1rem; }
+.voicestack-form .settings-panel-header h2 { font-size: 16px; font-weight: 600; color: var(--text); margin: 0 0 4px; }
+.voicestack-form .settings-panel-header p { font-size: 13px; color: var(--text2); margin: 0; line-height: 1.5; }
+.voicestack-form .field.tight { margin-bottom: 12px; }
+
+@media (max-width: 800px) {
+  .voicestack-form.dash-shell { flex-direction: column; }
+  .voicestack-form .dash-sidebar {
+    width: 100%; flex-direction: row; align-items: center;
+    padding: 1rem; border-right: none; border-bottom: 1px solid var(--border);
+  }
+  .voicestack-form .dash-sidebar-brand { margin-bottom: 0; margin-right: 1.5rem; }
+  .voicestack-form .dash-nav { flex-direction: row; flex: 0; }
+  .voicestack-form .dash-main-scroll > .custom-scrollbar-viewport { padding: 1.5rem 1.25rem; }
+}
+
+@media (max-width: 700px) {
+  .voicestack-form .dash-stats-row { flex-direction: column; }
+  .voicestack-form .dash-userbar { justify-content: space-between; width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .voicestack-form { padding: 1rem .5rem; }
+  .voicestack-form .card-body { padding: 1.25rem; }
+  .voicestack-form .g2 { grid-template-columns: 1fr; }
+  .voicestack-form .check-group { grid-template-columns: 1fr; }
+  .voicestack-form .entry-choice-row { grid-template-columns: 1fr; }
+  .voicestack-form .step-dot { width: 26px; height: 26px; font-size: 11px; }
+  .voicestack-form .step-labels { display: none; }
+  .voicestack-form .review-label { min-width: 100%; }
+  .voicestack-form .dash-table th, .voicestack-form .dash-table td { padding: 8px 12px; }
+  .voicestack-form .dash-sidebar { flex-wrap: wrap; row-gap: 10px; }
+  .voicestack-form .dash-main-scroll > .custom-scrollbar-viewport { padding: 1rem .75rem; }
+  .voicestack-form .detail-modal { max-width: 100%; }
+  .voicestack-form .integration-edit-modal { max-width: 100%; }
+  .voicestack-form .confirm-dialog { padding: 16px; }
+}
+
+/* Toasts — rendered by ToastProvider at the app root, above/outside any single page's own
+   .voicestack-form wrapper, so these define their own light/dark colors rather than relying on
+   that scoped variable set. */
+.toast-stack {
+  position: fixed; top: 20px; left: 20px; right: 20px; z-index: 2000;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  pointer-events: none;
+}
+.toast-stack:not([data-theme='light']) {
+  --toast-bg: #171b28; --toast-text: #eef1f7; --toast-border: #262b3b;
+  --toast-success: #5cc95f; --toast-success-border: rgba(92, 201, 95, .35);
+  --toast-danger: #f0716e; --toast-danger-border: rgba(240, 113, 110, .35);
+  --toast-info: #6c9bf5; --toast-info-border: rgba(108, 155, 245, .35);
+}
+.toast-stack[data-theme='light'] {
+  --toast-bg: #ffffff; --toast-text: #1a1a2e; --toast-border: #e2e8f0;
+  --toast-success: #3b6d11; --toast-success-border: #c0dfa0;
+  --toast-danger: #a32d2d; --toast-danger-border: #f0c0c0;
+  --toast-info: #2a5db0; --toast-info-border: #c3d6f5;
+}
+.toast {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; max-width: 360px;
+  padding: 12px 14px; border-radius: 8px;
+  background: var(--toast-bg); color: var(--toast-text); border: 1px solid var(--toast-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .25);
+  font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  animation: toast-in .18s ease;
+}
+.toast i { font-size: 16px; flex-shrink: 0; }
+.toast span { flex: 1; line-height: 1.4; }
+.toast-close { background: none; border: none; color: inherit; opacity: .6; cursor: pointer; padding: 0; display: flex; }
+.toast-close:hover { opacity: 1; }
+.toast-success { border-color: var(--toast-success-border); }
+.toast-success i { color: var(--toast-success); }
+.toast-error { border-color: var(--toast-danger-border); }
+.toast-error i { color: var(--toast-danger); }
+.toast-info { border-color: var(--toast-info-border); }
+.toast-info i { color: var(--toast-info); }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}

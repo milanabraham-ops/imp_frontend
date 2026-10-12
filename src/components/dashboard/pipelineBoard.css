@@ -1,0 +1,422 @@
+.voicestack-form .kanban-board {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.voicestack-form .kanban-column {
+  flex: 0 0 292px;
+  width: 292px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 260px);
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.voicestack-form .kanban-column.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.voicestack-form .kanban-column.column-flash {
+  animation: column-flash 2s ease-out;
+}
+@keyframes column-flash {
+  0%, 40% { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+  100% { border-color: var(--border); box-shadow: none; }
+}
+
+.voicestack-form .kanban-column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.voicestack-form .kanban-column-header::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.voicestack-form .kanban-column-header span:first-of-type { flex: 1; }
+
+.voicestack-form .kanban-column.tone-neutral .kanban-column-header { color: var(--text3); }
+.voicestack-form .kanban-column.tone-warning .kanban-column-header { color: var(--warning); }
+.voicestack-form .kanban-column.tone-danger .kanban-column-header { color: var(--danger); }
+.voicestack-form .kanban-column.tone-accent .kanban-column-header { color: var(--accent); }
+.voicestack-form .kanban-column.tone-success .kanban-column-header { color: var(--success); }
+
+.voicestack-form .kanban-column-count {
+  background: var(--bg3);
+  color: var(--text3);
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.voicestack-form .kanban-column-cards {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.voicestack-form .kanban-column-empty {
+  color: var(--text3);
+  font-size: 12px;
+  text-align: center;
+  padding: 22px 0;
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+  margin: 2px;
+}
+
+/* --- Card --- */
+
+.voicestack-form .kanban-card {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--text3);
+  border-radius: var(--radius);
+  padding: 11px 12px 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.voicestack-form .kanban-card.tone-neutral { border-left-color: var(--text3); }
+.voicestack-form .kanban-card.tone-warning { border-left-color: var(--warning); }
+.voicestack-form .kanban-card.tone-danger { border-left-color: var(--danger); }
+.voicestack-form .kanban-card.tone-accent { border-left-color: var(--accent); }
+.voicestack-form .kanban-card.tone-success { border-left-color: var(--success); }
+
+.voicestack-form .kanban-card.draggable { cursor: grab; }
+.voicestack-form .kanban-card.draggable:active { cursor: grabbing; }
+.voicestack-form .kanban-card.draggable:hover {
+  border-color: var(--text3);
+  box-shadow: var(--shadow-popover);
+  transform: translateY(-1px);
+}
+.voicestack-form .kanban-card.locked { background: var(--bg2); }
+.voicestack-form .kanban-card.dragging { opacity: 0.35; }
+
+.voicestack-form .kanban-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.voicestack-form .kanban-card-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.voicestack-form .kanban-card-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voicestack-form .kanban-card-grip {
+  flex-shrink: 0;
+  color: var(--text3);
+  font-size: 14px;
+  margin-top: 1px;
+}
+.voicestack-form .kanban-card.locked .kanban-card-grip { color: var(--text3); opacity: 0.7; }
+
+.voicestack-form .kanban-card-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+/* .you-badge is normally an inline mark trailing straight after text (its own margin-left
+   handles that spacing there) — here it's a peer of .group-badge in a flex row instead, so
+   reset its margin (the row's own gap already spaces them) and match .group-badge's sizing so
+   the two pills share the same height/baseline instead of the smaller badge looking offset. */
+.voicestack-form .kanban-card-badges .you-badge {
+  margin-left: 0;
+  padding: 2px 9px;
+  font-size: 11px;
+}
+
+/* Nudge for a card sitting with nobody actively working it right now (no specialist/QA/
+   integration agent claimed for its current stage) — same pill shape as .group-badge, danger
+   tones so it actually stands out rather than blending in as just another status pill. */
+.voicestack-form .unclaimed-badge, .voicestack-form .sync-issue-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+  background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger-border);
+}
+
+.voicestack-form .kanban-card-subtitle {
+  font-size: 12.5px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.voicestack-form .kanban-card-subtitle i { color: var(--text3); font-size: 13px; }
+
+.voicestack-form .kanban-card-market {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text3);
+  background: var(--bg3);
+  border-radius: 20px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.voicestack-form .kanban-card-meta {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.voicestack-form .kanban-card-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  width: fit-content;
+}
+.voicestack-form .kanban-card-chip.warning {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.voicestack-form .kanban-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1px 0;
+}
+
+.voicestack-form .kanban-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.voicestack-form .kanban-card-row-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.voicestack-form .kanban-card-row-label i { font-size: 13px; }
+
+.voicestack-form .kanban-card-row-value {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.voicestack-form .kanban-card-row-value .review-value { font-size: 12px; }
+
+.voicestack-form .kanban-card-row .inline-edit-select {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 26px 5px 8px;
+}
+
+.voicestack-form .btn-sm.ghost {
+  background: var(--accent-light);
+  border-color: var(--accent-ring);
+  color: var(--accent);
+}
+.voicestack-form .btn-sm.ghost:hover { background: var(--accent-ring); }
+
+.voicestack-form .kanban-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+}
+
+.voicestack-form .kanban-card-timestamp {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.voicestack-form .kanban-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.voicestack-form .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.voicestack-form .icon-btn:hover { background: var(--bg3); color: var(--text); border-color: var(--text3); }
+.voicestack-form .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.voicestack-form .icon-btn.danger:hover { background: var(--danger-light); color: var(--danger); border-color: var(--danger-border); }
+
+.voicestack-form .kanban-card.kanban-card-group {
+  background: var(--accent-light);
+  border-left-color: var(--accent);
+}
+
+/* --- Responsive --- */
+/* Breakpoints match the app-wide convention set in form.css (dash-shell layout collapses at
+   800px, tighter spacing/tap-target tweaks land at 600px) rather than inventing new values. */
+
+@media (max-width: 800px) {
+  .voicestack-form .kanban-board {
+    gap: 12px;
+    scroll-snap-type: x proximity;
+  }
+
+  .voicestack-form .kanban-column {
+    flex: 0 0 62vw;
+    width: 62vw;
+    max-width: 320px;
+    min-width: 220px;
+    max-height: calc(100vh - 300px);
+    scroll-snap-align: start;
+  }
+
+  .voicestack-form .kanban-column-header span:first-of-type {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .voicestack-form .icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .voicestack-form .kanban-board {
+    gap: 10px;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .voicestack-form .kanban-column {
+    flex: 0 0 85vw;
+    width: 85vw;
+    max-width: 360px;
+    min-width: 0;
+    max-height: calc(100vh - 280px);
+  }
+
+  .voicestack-form .kanban-column-header {
+    padding: 14px 14px;
+    font-size: 12.5px;
+  }
+
+  .voicestack-form .kanban-column-cards {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .voicestack-form .kanban-card {
+    padding: 13px 14px 12px;
+    gap: 9px;
+  }
+
+  .voicestack-form .kanban-card-title {
+    font-size: 14.5px;
+  }
+
+  .voicestack-form .kanban-card-subtitle {
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+
+  .voicestack-form .kanban-card-market {
+    margin-left: 0;
+  }
+
+  .voicestack-form .kanban-card-row {
+    flex-wrap: wrap;
+  }
+
+  .voicestack-form .kanban-card-row .inline-edit-select {
+    font-size: 13.5px;
+    padding: 9px 30px 9px 10px;
+  }
+
+  /* .btn-sm's base sizing (form.css) is tuned for mouse precision; cards need a bigger tap
+     target on a phone screen. Scoped to kanban cards so it doesn't affect .btn-sm elsewhere. */
+  .voicestack-form .kanban-card .btn-sm {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .voicestack-form .kanban-card-actions {
+    gap: 8px;
+  }
+
+  .voicestack-form .icon-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .voicestack-form .kanban-card-footer {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+}
