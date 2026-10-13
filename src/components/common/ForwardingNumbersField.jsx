@@ -3,7 +3,7 @@ import { API_URL } from '../../context/AuthContext'
 import { apiFetch } from '../../lib/apiFetch'
 import { useToast } from '../../context/ToastContext'
 
-// A plain text field (one number per line) — shared by the submission detail view, the QA review
+// A plain text field (one number per line), shared by the submission detail view, the QA review
 // modal, and the standalone Forwarding Numbers table, so there's one place that knows how to save
 // it rather than three separate copies. Deliberately open to everyone (POC included, unlike every
 // other tracked field): saved through the normal PATCH /submissions/:id endpoint, which allows it
@@ -12,7 +12,7 @@ import { useToast } from '../../context/ToastContext'
 // another line just collapses back down instead of listing it twice.
 //
 // The Yes/No toggle alongside it is the same `forwardingNumberRequired` field the intake wizard's
-// own Phone Numbers & Hours step sets — surfaced here too (not just there) so staff reviewing an
+// own Phone Numbers & Hours step sets, surfaced here too (not just there) so staff reviewing an
 // account from the submission detail view, QA review, or this table can flip it without having to
 // reopen the full wizard. ForwardingNumbersPage only lists accounts where it's on.
 export default function ForwardingNumbersField({ submission, onChanged, compact = false }) {

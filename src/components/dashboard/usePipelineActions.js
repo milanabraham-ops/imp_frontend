@@ -134,6 +134,11 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
     if (ok) setHandoffTarget(null)
   }
 
+  // A row still flagged error/clarification means the account isn't actually fixed yet, the
+  // backend refuses a Completed save in this state too (submissionController.js); this is just the
+  // same check client-side so the button/outcome already matches before the round trip.
+  const hasUnresolvedQaFlags = (checklist) => checklist.some((row) => row.status === 'error' || row.status === 'clarification')
+
   const finalizeComplete = async (submission, checklist, message) => {
     setCompleting(true)
     const ok = await saveFields(submission, { configurationStatus: 'Completed', qaChecklist: checklist, qaResultMessage: message }, 'QA result sent.')
@@ -141,8 +146,23 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
     if (ok) setReviewTarget(null)
   }
 
+  // Saves the checklist/notes and the message (so the specialist still sees exactly what's wrong),
+  // but leaves configurationStatus at 'QA' instead of advancing it. The account stays right where
+  // it is, flags and all, until whoever's fixing it is done and this gets reviewed again, rather
+  // than silently completing over unresolved errors.
+  const saveWithUnresolvedFlags = async (submission, checklist, message) => {
+    setCompleting(true)
+    const ok = await saveFields(submission, { qaChecklist: checklist, qaResultMessage: message }, 'Saved. Unresolved items need another look before this can be completed.')
+    setCompleting(false)
+    if (ok) setReviewTarget(null)
+  }
+
   const requestMarkComplete = (checklist, message) => {
     if (!reviewTarget) return
+    if (hasUnresolvedQaFlags(checklist)) {
+      saveWithUnresolvedFlags(reviewTarget, checklist, message)
+      return
+    }
     if (isMine(reviewTarget.implementationSpecialist, user?.name)) {
       setSelfReviewTarget({ submission: reviewTarget, checklist, message })
       return

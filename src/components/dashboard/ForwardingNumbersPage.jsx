@@ -8,7 +8,7 @@ import CustomScrollbar from '../common/CustomScrollbar'
 import ForwardingNumbersField from '../common/ForwardingNumbersField'
 import '../form/form.css'
 
-// A plain, searchable log of every account's forwarding numbers — deliberately not a kanban
+// A plain, searchable log of every account's forwarding numbers, deliberately not a kanban
 // board like Pipeline/Integrations, since there's no stage to move through here, just a shared
 // record everyone (POC included) can add to. A POC only ever sees their own accounts here (same
 // /submissions scoping Integrations uses); specialist/QA/admin see every account.
@@ -25,7 +25,7 @@ export default function ForwardingNumbersPage() {
       const res = await apiFetch(`${API_URL}/submissions`)
       if (!res.ok) throw new Error('Failed to load accounts')
       const body = await res.json()
-      // Only accounts that actually need their numbers forwarded (see Step2PhoneHours' toggle) —
+      // Only accounts that actually need their numbers forwarded (see Step2PhoneHours' toggle) ,
       // otherwise every new practice defaults onto this page before anyone's confirmed it needs
       // that setup at all.
       setSubmissions(Array.isArray(body) ? body.filter((s) => s.forwardingNumberRequired) : [])

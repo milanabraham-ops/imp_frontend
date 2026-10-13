@@ -4,7 +4,7 @@ import { REVIEW_SECTIONS, STATUS_SECTION } from '../form/reviewSections'
 import ReviewFieldValue from '../form/ReviewFieldValue'
 import CommentThread from '../common/CommentThread'
 
-// Right-click "Add comment" menu, Sheets-style — a single-option menu positioned at the click
+// Right-click "Add comment" menu, Sheets-style, a single-option menu positioned at the click
 // point, closed by clicking away, scrolling, or Escape (not by re-clicking the same spot, since
 // a real context menu doesn't require that either).
 function SectionContextMenu({ x, y, onAddComment, onClose, anchorEl }) {

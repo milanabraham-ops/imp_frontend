@@ -114,15 +114,21 @@
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.15); }
 .auth-divider span { padding: 0 10px; }
 
-.auth-google-slot { display: flex; justify-content: center; min-height: 44px; }
-/* Google's rendered button lives inside an iframe it injects into this container — that iframe's
-   own intrinsic size is taller than the visible pill button itself (reserved space Google uses
-   internally), which otherwise reads as a white strip below the button once it's sitting on this
-   page's dark background: border-radius/overflow alone only clip by shape, not by height, so the
-   wrapper still grows to fit that extra iframe height unless explicitly capped. 40px matches
-   Google's own documented rendered height for size: 'large' (see GoogleSignInButton.jsx). */
-.auth-google-slot > div { height: 40px; border-radius: 999px; overflow: hidden; }
+.auth-google-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; }
 .auth-google-slot .hint { color: rgba(255, 255, 255, 0.45); font-size: 12px; text-align: center; }
+
+/* Our own button (see GoogleSignInButton.jsx) rather than Google's rendered iframe, no iframe means
+   no leftover white space to clip around in the first place. */
+.auth-google-btn {
+  width: 100%; height: 44px; padding: 0 16px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #131314; color: #fff;
+  font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.auth-google-btn:hover { background: #1e1f20; border-color: rgba(255, 255, 255, 0.28); }
+.auth-google-btn:active { background: #0a0a0b; }
 
 .auth-error {
   display: flex; align-items: flex-start; gap: 8px;

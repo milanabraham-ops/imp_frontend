@@ -8,23 +8,23 @@ import { useAuth } from '../../context/AuthContext'
 // A lightweight, integration-scoped alternative to sending someone all the way to the full
 // Implementation Setup wizard just to fix a PMS detail or paste in server access. Reads and
 // writes the exact same pms/serverAccess/additionalNotes fields the wizard's own "Links & PMS"
-// step does (same PATCH /submissions/:id endpoint) — so whichever one someone uses, the other
+// step does (same PATCH /submissions/:id endpoint), so whichever one someone uses, the other
 // always shows the current value; there's no separate copy of this data anywhere.
 //
 // Also the one and only modal the integration board's View button opens (`readOnly`), so anyone
-// without edit rights sees these same three fields — never the full intake-wizard detail view,
+// without edit rights sees these same three fields, never the full intake-wizard detail view,
 // which would defeat the point of keeping server access off the card and out of unrelated eyes.
 export default function IntegrationEditModal({ submission, busy, readOnly = false, onClose, onSave, onCommentPosted }) {
   const { user } = useAuth()
   const [pms, setPms] = useState('')
   const [serverAccess, setServerAccess] = useState('')
   const { names: pmsOptions, findDoc } = usePmsDocs()
-  // An admin can register a PMS by name alone, before its guide doc is written — only show the
+  // An admin can register a PMS by name alone, before its guide doc is written, only show the
   // info box once there's an actual link to send someone to.
   const foundDoc = findDoc(pms)
   const pmsDoc = foundDoc?.url ? foundDoc : null
 
-  // Once an integration ticket exists, only the original submitter may still change the PMS —
+  // Once an integration ticket exists, only the original submitter may still change the PMS ,
   // not even admin (see stripLockedPmsEdit in submissionController.js). Integration work may
   // already be underway against the current value; changing it later should be a deliberate
   // correction by whoever submitted the request, not something anyone else does in passing.

@@ -8,15 +8,15 @@ function markShown(version) {
   try {
     localStorage.setItem(SHOWN_KEY, String(version))
   } catch {
-    // can't persist it — it may show again next check, not fatal
+    // can't persist it, it may show again next check, not fatal
   }
 }
 
 // Checks the always-fresh, unhashed /release-notes.json (not whatever's baked into this tab's own
 // bundle) so a tab left open across a deploy can notice the gap without needing the new JS loaded
-// first — same reasoning as the "already shown" flag living in localStorage rather than state
+// first, same reasoning as the "already shown" flag living in localStorage rather than state
 // that'd reset on every reload/login: a version is shown at most once, ever, on this device. No
-// background timer either — there's no way to be pushed the moment a deploy actually lands without
+// background timer either, there's no way to be pushed the moment a deploy actually lands without
 // real server infrastructure (a webhook + a live connection to every open tab), so this just checks
 // at moments that are already natural: once on load, and again whenever the tab is switched back
 // to, rather than polling on a schedule for no particular reason.
@@ -38,16 +38,16 @@ export function useReleaseNotesCheck() {
         try {
           shown = localStorage.getItem(SHOWN_KEY)
         } catch {
-          // storage unavailable — just re-prompt every check, not fatal
+          // storage unavailable, just re-prompt every check, not fatal
         }
         if (String(shown) === String(latest.version)) return
-        // Marked the moment it's actually displayed, not only on an explicit dismiss/reload click —
+        // Marked the moment it's actually displayed, not only on an explicit dismiss/reload click ,
         // once shown once, it's done for this version, even if the tab is just closed or navigated
         // away from without either button ever being pressed.
         markShown(latest.version)
         if (!cancelled) setAvailable(latest)
       } catch {
-        // offline, or the request was blocked — just try again next time the tab regains focus
+        // offline, or the request was blocked, just try again next time the tab regains focus
       }
     }
 

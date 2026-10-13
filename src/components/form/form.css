@@ -28,7 +28,7 @@
   --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.25);
   --shadow-modal: 0 8px 30px rgba(0, 0, 0, 0.25);
 
-  /* Brand mark color, lifted from the logo (the violet square) — used for the sidebar's
+  /* Brand mark color, lifted from the logo (the violet square), used for the sidebar's
      gradient wash and its own nav highlight, kept separate from --accent so the rest of the
      app's blue interactive color is untouched. */
   --brand-rgb: 74, 60, 225;
@@ -185,12 +185,12 @@
 }
 .voicestack-form .combobox-input:disabled { opacity: .6; cursor: not-allowed; background-image: none; padding-right: 12px; }
 
-/* SelectInput's trigger is a <button>, unlike ComboBoxInput's <input> — browsers give buttons
+/* SelectInput's trigger is a <button>, unlike ComboBoxInput's <input>, browsers give buttons
    their own default chrome (flat grey background, faint border) that a plain class selector
    can't override unless the button is explicitly included in the rules that set it, which is why
    .select-input-trigger is added directly into the base field rule and its :focus variant above,
    rather than relying on .combobox-input/.inline-edit-select alone (those only ever added the
-   chevron/sizing on top of a base an <input>/<select> already had for free — a <button> never
+   chevron/sizing on top of a base an <input>/<select> already had for free, a <button> never
    did). This block just resets the remaining structural button quirks (centered text, no width,
    no font inheritance) that those rules don't cover. */
 .voicestack-form .select-input-trigger {
@@ -204,7 +204,7 @@
 .voicestack-form .select-input-trigger:disabled { cursor: not-allowed; }
 .voicestack-form .select-input-placeholder { color: var(--text3); }
 .voicestack-form .combobox-menu {
-  /* position/top/left/minWidth are set inline (see useDropdown.js) — computed from the trigger's
+  /* position/top/left/minWidth are set inline (see useDropdown.js), computed from the trigger's
      actual on-screen position via getBoundingClientRect(), since this renders through a portal. */
   z-index: 1500;
   max-height: 240px;
@@ -561,7 +561,7 @@
 .voicestack-form .dash-sidebar {
   width: 240px;
   flex-shrink: 0;
-  /* Brand-colored regardless of light/dark theme — the sidebar is a fixed brand element,
+  /* Brand-colored regardless of light/dark theme, the sidebar is a fixed brand element,
      lifted straight from the logo's violet square, with just a slight gradient across it. */
   background: linear-gradient(165deg, #241f42 0%, #322a5e 100%);
   border-right: 1px solid rgba(0, 0, 0, 0.15);
@@ -608,11 +608,11 @@
 .voicestack-form .dash-nav-badge.comment {
   background: radial-gradient(circle at 30% 30%, #8dffb0, #35c46a 55%, #1f8f4a);
 }
-/* Same dots, inline in a table row — so someone scanning the list can tell exactly which row
+/* Same dots, inline in a table row, so someone scanning the list can tell exactly which row
    triggered the sidebar badge, instead of just knowing "something" changed. */
 .voicestack-form .row-badges { display: inline-flex; gap: 4px; margin-right: 7px; vertical-align: middle; }
 
-/* The sidebar is always violet regardless of theme, so it always needs the light-text logo —
+/* The sidebar is always violet regardless of theme, so it always needs the light-text logo ,
    independent of the light/dark logo swap used on the auth pages' own (non-colored) .brand. */
 .voicestack-form .dash-sidebar-brand img.brand-logo-light { display: none; }
 .voicestack-form[data-theme='light'] .dash-sidebar-brand img.brand-logo-dark { display: block; }
@@ -623,7 +623,7 @@
 .voicestack-form .dash-main-scroll > .custom-scrollbar-viewport { padding: 2rem 2.5rem; }
 
 /* Custom scrollbar (native ::-webkit-scrollbar customization is unreliable across browsers/OS
-   scrollbar themes — arrows and thickness aren't consistently overridable — so scroll position is
+   scrollbar themes, arrows and thickness aren't consistently overridable, so scroll position is
    mirrored onto a div-based thumb instead, and the native scrollbar is hidden entirely). */
 .voicestack-form .custom-scrollbar-wrap { position: relative; }
 .voicestack-form .custom-scrollbar-viewport {
@@ -770,14 +770,14 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text);
 }
 .voicestack-form .pms-doc-card-title i { color: var(--accent); font-size: 15px; flex-shrink: 0; }
-/* Purely decorative — just the first page, shrunk to fit, not something to scroll or click inside
+/* Purely decorative, just the first page, shrunk to fit, not something to scroll or click inside
    (the real thing opens in the new tab the card itself links to). The wrap clips anything beyond
-   it; the iframe inside renders at a generous natural size — large enough that the embedded
-   viewer doesn't need its own scrollbars to show one page — then the whole rendered result is
+   it; the iframe inside renders at a generous natural size, large enough that the embedded
+   viewer doesn't need its own scrollbars to show one page, then the whole rendered result is
    scaled down as a single visual unit via transform: scale(), not resized/reflowed, so there's
    nothing left for it to scroll. The wrap's aspect ratio is shorter than an actual 8.5:11 page
    (9.5 tall, not 11) specifically to crop out the gap/start of page two that bled in at a true
-   page ratio — a deliberate slight crop of page one's own bottom margin, not a mistake. 170px/
+   page ratio, a deliberate slight crop of page one's own bottom margin, not a mistake. 170px/
    1000px = the 0.17 scale below; keep both in sync if either changes. */
 .voicestack-form .pms-doc-card-frame-wrap {
   width: 170px; aspect-ratio: 8.5 / 9.5; position: relative; overflow: hidden;
@@ -911,7 +911,7 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   .voicestack-form .confirm-dialog { padding: 16px; }
 }
 
-/* Toasts — rendered by ToastProvider at the app root, above/outside any single page's own
+/* Toasts, rendered by ToastProvider at the app root, above/outside any single page's own
    .voicestack-form wrapper, so these define their own light/dark colors rather than relying on
    that scoped variable set. */
 .toast-stack {
@@ -956,7 +956,7 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   to { opacity: 1; transform: none; }
 }
 
-/* Update banner — rendered at the app root (App.jsx), outside any .voicestack-form page wrapper,
+/* Update banner, rendered at the app root (App.jsx), outside any .voicestack-form page wrapper,
    so it can't rely on that class's CSS variables or .btn-sm/.icon-btn styles; it's fully
    self-contained instead, with its own light/dark colors. */
 .update-banner {

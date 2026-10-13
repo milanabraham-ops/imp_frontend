@@ -19,7 +19,7 @@ function formatTimestamp(value) {
   })
 }
 
-// Finds the "@partial-name" token (if any) immediately behind the cursor — used to drive the
+// Finds the "@partial-name" token (if any) immediately behind the cursor, used to drive the
 // mention-autocomplete dropdown while typing in the composer/edit textarea. Only matches a token
 // that starts right after whitespace or the start of the text, so an email-like "foo@bar" mid-word
 // never triggers it.
@@ -35,7 +35,7 @@ function escapeRegExp(value) {
 }
 
 // Cosmetic-only split of "@Name" mentions out of a comment's plain-text body so they can be
-// bolded in the rendered list — the stored text itself is always plain "@Name", no markup.
+// bolded in the rendered list, the stored text itself is always plain "@Name", no markup.
 function renderCommentText(text, staffNames) {
   if (!staffNames.length || !text.includes('@')) return text
   const pattern = new RegExp(`@(?:${staffNames.map(escapeRegExp).join('|')})\\b`, 'g')
@@ -55,12 +55,12 @@ function renderCommentText(text, staffNames) {
   return parts
 }
 
-// A Sheets-comment-style discussion thread on one submission — shared by every view that shows
+// A Sheets-comment-style discussion thread on one submission, shared by every view that shows
 // it (specialist/QA detail views, the POC's own submission view), so there's exactly one place
 // that knows how to post/render/edit/delete a comment rather than several separate copies.
 //
 // `section` scopes the thread to one review section (see SubmissionDetailSections) instead of the
-// whole submission — only that section's comments are shown, and new ones are tagged with it.
+// whole submission, only that section's comments are shown, and new ones are tagged with it.
 // Left undefined/null, this is the general thread: every comment with no section at all.
 export default function CommentThread({ submission, section = null, heading = 'Comments', focusKey, onPosted }) {
   const { user } = useAuth()
@@ -76,7 +76,7 @@ export default function CommentThread({ submission, section = null, heading = 'C
   const [mention, setMention] = useState(null) // { query, start }, null when no "@token" is active
   const comments = (submission?.comments || []).filter((c) => (c.section || null) === section)
 
-  // Same GET /agents the reassign dropdowns use — now readable by a POC too (see agentRoutes.js),
+  // Same GET /agents the reassign dropdowns use, now readable by a POC too (see agentRoutes.js),
   // since this composer is also used on a POC's own submission view.
   useEffect(() => {
     let cancelled = false
@@ -86,7 +86,7 @@ export default function CommentThread({ submission, section = null, heading = 'C
         if (!cancelled && Array.isArray(body)) setAgents(body)
       })
       .catch(() => {
-        // No mention list is a soft failure — the composer still works, just without autocomplete.
+        // No mention list is a soft failure, the composer still works, just without autocomplete.
       })
     return () => {
       cancelled = true
@@ -95,13 +95,13 @@ export default function CommentThread({ submission, section = null, heading = 'C
 
   const staffNames = agents.map((a) => a.name)
 
-  // Reused for both the composer and an in-progress edit — see useDropdown.js for the
+  // Reused for both the composer and an in-progress edit, see useDropdown.js for the
   // portal/positioning/click-away mechanics this shares with SelectInput/ComboBoxInput.
   const { open: mentionOpen, setOpen: setMentionOpen, anchorRef, menuRef, style } = useDropdown()
 
   // Lets a caller (the section's right-click "Add comment" menu) drop focus straight into the
   // composer the moment this thread is opened, rather than making the user find and click it
-  // themselves — bump focusKey any time that should happen again.
+  // themselves, bump focusKey any time that should happen again.
   useEffect(() => {
     if (focusKey) anchorRef.current?.focus()
     // eslint-disable-next-line react-hooks/exhaustive-deps
