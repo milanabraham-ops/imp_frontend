@@ -114,24 +114,14 @@
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.15); }
 .auth-divider span { padding: 0 10px; }
 
-/* Google's rendered button lives inside an iframe it injects straight into this element (see
-   GoogleSignInButton.jsx's divRef) — that iframe's own intrinsic size is taller than the visible
-   pill button itself (reserved space Google uses internally), which otherwise reads as a white
-   strip around the button once it's sitting on this page's dark background. overflow/border-radius
-   alone only clip by shape, not by height, so the box still grows to fit that extra iframe height
-   unless explicitly capped. Clipped at every level Google might wrap a div around its iframe at
-   (observed: it's sometimes one level, sometimes two, depending on the account/button state) rather
-   than just the first child, since a clip on only the outer one of two still let a sliver of the
-   inner one's edge show through — :not(.hint) keeps this from also clipping the "not configured"
-   fallback text below, which has no such height limit and can wrap to two lines. 40px matches
-   Google's own documented rendered height for size: 'large' (see GoogleSignInButton.jsx). */
 .auth-google-slot { display: flex; justify-content: center; min-height: 44px; }
-.auth-google-slot > div:not(.hint),
-.auth-google-slot > div:not(.hint) > div {
-  height: 40px;
-  border-radius: 999px;
-  overflow: hidden;
-}
+/* Google's rendered button lives inside an iframe it injects into this container — that iframe's
+   own intrinsic size is taller than the visible pill button itself (reserved space Google uses
+   internally), which otherwise reads as a white strip below the button once it's sitting on this
+   page's dark background: border-radius/overflow alone only clip by shape, not by height, so the
+   wrapper still grows to fit that extra iframe height unless explicitly capped. 40px matches
+   Google's own documented rendered height for size: 'large' (see GoogleSignInButton.jsx). */
+.auth-google-slot > div { height: 40px; border-radius: 999px; overflow: hidden; }
 .auth-google-slot .hint { color: rgba(255, 255, 255, 0.45); font-size: 12px; text-align: center; }
 
 .auth-error {
