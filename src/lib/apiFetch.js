@@ -25,18 +25,36 @@ export function setOnSessionExpired(fn) {
   onSessionExpired = fn
 }
 
-function readCookie(name) {
-  const escaped = name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1')
-  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`))
-  return match ? decodeURIComponent(match[1]) : null
+// The backend's CSRF check (see middleware/csrf.js) compares this against a value it derives from
+// the httpOnly refresh cookie — it used to be a second, JS-readable cookie the frontend echoed
+// back out of document.cookie, but that cookie belongs to the BACKEND's own origin (Render), and a
+// page on a different origin (Vercel) can never read another origin's cookie via document.cookie,
+// no matter its Path/SameSite/Secure settings. That silently failed this check on every single
+// refresh in production, logging everyone out on every reload. localStorage is same-origin to the
+// frontend instead, and (unlike the access token) this value has no power on its own without the
+// httpOnly cookie alongside it, so persisting it is fine — it needs to survive a reload, same as
+// the refresh cookie does, so the very first refresh call after one still has it available.
+const CSRF_STORAGE_KEY = 'voicestack.csrf'
+
+export function getCsrfToken() {
+  try {
+    return localStorage.getItem(CSRF_STORAGE_KEY)
+  } catch {
+    return null
+  }
 }
 
-// Double-submit CSRF check on the backend compares this cookie's value against the same value
-// sent as a header — reading it fresh from document.cookie (rather than tracking a copy in JS
-// state) means it's always current, including right after a page reload when no in-memory copy
-// exists yet.
+export function setCsrfToken(token) {
+  try {
+    if (token) localStorage.setItem(CSRF_STORAGE_KEY, token)
+    else localStorage.removeItem(CSRF_STORAGE_KEY)
+  } catch {
+    // storage unavailable — refresh/logout will just fail the CSRF check until it's available again
+  }
+}
+
 export function csrfHeaders() {
-  const csrfToken = readCookie('csrfToken')
+  const csrfToken = getCsrfToken()
   return csrfToken ? { 'X-CSRF-Token': csrfToken } : {}
 }
 
@@ -58,15 +76,18 @@ export async function refreshAccessToken() {
       })
       if (!res.ok) {
         setAccessToken(null)
+        setCsrfToken(null)
         onSessionExpired()
         return null
       }
       const body = await res.json()
       setAccessToken(body.token)
+      setCsrfToken(body.csrfToken)
       onRefreshed(body)
       return body
     } catch {
       setAccessToken(null)
+      setCsrfToken(null)
       onSessionExpired()
       return null
     } finally {

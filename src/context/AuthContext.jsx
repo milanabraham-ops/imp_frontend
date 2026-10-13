@@ -6,6 +6,7 @@ import {
   getAccessToken,
   refreshAccessToken,
   setAccessToken,
+  setCsrfToken,
   setOnRefreshed,
   setOnSessionExpired,
 } from '../lib/apiFetch'
@@ -85,6 +86,7 @@ export function AuthProvider({ children }) {
     }
     const body = await res.json()
     setAccessToken(body.token)
+    setCsrfToken(body.csrfToken)
     setToken(body.token)
     setUser(body.user)
     scheduleProactiveRefresh()
@@ -116,14 +118,16 @@ export function AuthProvider({ children }) {
   // already be cleared by the time that navigation renders the next page, not after some await.
   // The actual refresh-token invalidation on the server happens in the background either way.
   const logout = () => {
+    const headers = csrfHeaders()
     clearRefreshTimer()
     setAccessToken(null)
+    setCsrfToken(null)
     setToken(null)
     setUser(null)
     fetch(`${API_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
-      headers: csrfHeaders(),
+      headers,
     }).catch(() => {})
   }
 

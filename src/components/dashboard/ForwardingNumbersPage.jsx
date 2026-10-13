@@ -25,7 +25,10 @@ export default function ForwardingNumbersPage() {
       const res = await apiFetch(`${API_URL}/submissions`)
       if (!res.ok) throw new Error('Failed to load accounts')
       const body = await res.json()
-      setSubmissions(Array.isArray(body) ? body : [])
+      // Only accounts that actually need their numbers forwarded (see Step2PhoneHours' toggle) —
+      // otherwise every new practice defaults onto this page before anyone's confirmed it needs
+      // that setup at all.
+      setSubmissions(Array.isArray(body) ? body.filter((s) => s.forwardingNumberRequired) : [])
       setError('')
     } catch (err) {
       setError(err.message || 'Failed to load accounts')

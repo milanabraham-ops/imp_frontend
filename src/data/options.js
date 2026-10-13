@@ -161,6 +161,7 @@ export const initialFormData = {
   goLiveDate: '',
   // Step 2
   phoneNumbers: '',
+  forwardingNumberRequired: false,
   businessDays: [],
   businessHours: '',
   afterHoursDays: [],

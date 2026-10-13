@@ -539,6 +539,9 @@
 
 .voicestack-form .forwarding-numbers-textarea { width: 100%; min-height: 70px; resize: vertical; font-family: inherit; }
 .voicestack-form .forwarding-numbers-compact .forwarding-numbers-textarea { min-height: 44px; font-size: 12px; }
+.voicestack-form .forwarding-required-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; color: var(--text2); }
+.voicestack-form .forwarding-required-toggle .btn-sm { padding: 2px 10px; }
+.voicestack-form .forwarding-required-toggle .btn-sm.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .voicestack-form .forwarding-numbers-cell { white-space: normal; min-width: 220px; max-width: 320px; vertical-align: top; }
 
 /* Dashboard */

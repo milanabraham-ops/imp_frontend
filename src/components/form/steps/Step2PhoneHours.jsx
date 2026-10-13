@@ -1,5 +1,11 @@
 import CheckboxGroup from '../ui/CheckboxGroup'
+import RadioGroup from '../ui/RadioGroup'
 import { WEEKDAYS, ALL_DAYS } from '../../../data/options'
+
+const FORWARDING_REQUIRED_OPTIONS = [
+  { value: true, label: 'Yes' },
+  { value: false, label: 'No' },
+]
 
 export default function Step2PhoneHours({ data, update }) {
   const monFriChecked = WEEKDAYS.every((d) => data.businessDays.includes(d))
@@ -26,6 +32,18 @@ export default function Step2PhoneHours({ data, update }) {
         <div className="hint">
           Include the source name for each number and specify whether it is Billable or Non-Billable. Separate multiple entries with a comma.
         </div>
+      </div>
+
+      <div className="field">
+        <label>Forwarding Number Required?</label>
+        <RadioGroup
+          name="forwardingNumberRequired"
+          options={FORWARDING_REQUIRED_OPTIONS}
+          value={data.forwardingNumberRequired}
+          onChange={(v) => update('forwardingNumberRequired', v)}
+          row
+        />
+        <div className="hint">If not needed yet, leave this off, it can be turned on later once forwarding is actually required.</div>
       </div>
 
       <div className="divider"></div>
