@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SubmissionDetailSections from './SubmissionDetailSections'
 import MessageComposeModal from '../common/MessageComposeModal'
 import ConfirmDialog from '../common/ConfirmDialog'
@@ -6,16 +6,17 @@ import CommentThread from '../common/CommentThread'
 import ForwardingNumbersField from '../common/ForwardingNumbersField'
 import { QA_CHECKLIST_ITEMS } from '../../data/options'
 import { useEscapeClose } from '../../hooks/useEscapeClose'
+import { useQaChecklistDraft } from '../../hooks/useQaChecklistDraft'
 
 function formatDate(value) {
   if (!value) return ''
   return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-// Merges this account's saved checklist against the current shared template — any item added to
+// Merges this account's saved checklist against the current shared template, any item added to
 // the template since this account was last reviewed shows up here too (blank, ready to review).
 // Anything the account already has that's since fallen off the template (removed/renamed) is
-// dropped rather than kept — the checklist always mirrors the current template exactly.
+// dropped rather than kept, the checklist always mirrors the current template exactly.
 function buildChecklist(templateItems, existingChecklist) {
   const items = templateItems && templateItems.length ? templateItems : QA_CHECKLIST_ITEMS
   const existingByName = new Map((existingChecklist || []).map((row) => [row.item.toLowerCase(), row]))
@@ -25,7 +26,7 @@ function buildChecklist(templateItems, existingChecklist) {
   })
 }
 
-// Mirrors chatService.js's checklistSummary on the backend — used to seed the editable default
+// Mirrors chatService.js's checklistSummary on the backend, used to seed the editable default
 // message shown before the QA result actually posts to Chat.
 function checklistSummary(checklist) {
   const errors = checklist.filter((row) => row.status === 'error')
@@ -64,19 +65,33 @@ export default function QAReviewModal({
   const [pendingRemoveIndex, setPendingRemoveIndex] = useState(null)
   const [removingItem, setRemovingItem] = useState(false)
   const [removeItemError, setRemoveItemError] = useState('')
+  // Set right when a completion is actually attempted (confirmSendResult), so the reset-on-close
+  // effect below can tell "closed because the save succeeded" apart from "closed/cancelled without
+  // ever trying to save" — only the former should clear the draft; the latter is exactly the case
+  // this whole feature exists to protect.
+  const attemptedSendRef = useRef(false)
 
   useEffect(() => {
     if (submission) setChecklist(buildChecklist(templateItems, submission.qaChecklist))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submission?._id])
 
+  const { pendingDraft, restoreDraft, discardDraft, clearDraft } = useQaChecklistDraft({
+    submissionId: submission?._id,
+    checklist,
+    savedChecklist: submission?.qaChecklist,
+    enabled: Boolean(submission) && !alreadyComplete,
+  })
+
   // This modal is always mounted (the parent renders it unconditionally and just relies on the
-  // `if (!submission) return null` below), so without this its own interaction state — most
-  // importantly the "QA Result" compose popup — would survive across opens. Left over from a
+  // `if (!submission) return null` below), so without this its own interaction state, most
+  // importantly the "QA Result" compose popup, would survive across opens. Left over from a
   // previous completion, it would resurface immediately the next time this opens for anything,
   // recheck included, instead of a clean view.
   useEffect(() => {
     if (submission) return
+    if (attemptedSendRef.current) clearDraft()
+    attemptedSendRef.current = false
     setComposingResult(false)
     setResultMessage('')
     setNewItem('')
@@ -84,10 +99,11 @@ export default function QAReviewModal({
     setPendingRemoveIndex(null)
     setRemovingItem(false)
     setRemoveItemError('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submission])
 
   // Disabled while either nested dialog (the compose-result popup, the remove-item confirm) is
-  // open — those have their own Escape handling now, and without this gate a single Escape press
+  // open, those have their own Escape handling now, and without this gate a single Escape press
   // would close both the nested dialog and this whole modal at once.
   useEscapeClose(Boolean(submission) && !composingResult && pendingRemoveIndex === null && !busy, onClose)
 
@@ -106,7 +122,7 @@ export default function QAReviewModal({
 
   const setNote = (index, note) => setChecklist((prev) => prev.map((row, i) => (i === index ? { ...row, note } : row)))
 
-  // Previously this only removed the row from this one review's in-progress checklist state — the
+  // Previously this only removed the row from this one review's in-progress checklist state, the
   // item was still sitting in the agent's personal template underneath, so it silently came back
   // on the very next review. Now it's a real delete: this button only ever shows for a personal
   // item (never a base one, guarded below the checklist map), so removing it here always means
@@ -163,7 +179,13 @@ export default function QAReviewModal({
   }
 
   const confirmSendResult = () => {
+    attemptedSendRef.current = true
     onMarkComplete(checklist, resultMessage)
+  }
+
+  const handleRestoreDraft = () => {
+    const draft = restoreDraft()
+    if (draft) setChecklist(draft.checklist)
   }
 
   return (
@@ -182,6 +204,23 @@ export default function QAReviewModal({
         </div>
 
         <div className="detail-modal-body">
+          {pendingDraft && (
+            <div className="info-box">
+              <i className="ti ti-info-circle"></i>
+              <span>
+                You have unsaved QA progress{pendingDraft.savedAt ? ` from ${new Date(pendingDraft.savedAt).toLocaleString()}` : ''}. Restore
+                it, or discard it and start from what's saved?
+              </span>
+              <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexShrink: 0 }}>
+                <button type="button" className="btn-sm" onClick={handleRestoreDraft}>
+                  Restore
+                </button>
+                <button type="button" className="btn-sm" onClick={discardDraft}>
+                  Discard
+                </button>
+              </div>
+            </div>
+          )}
           <SubmissionDetailSections submission={submission} />
 
           <ForwardingNumbersField submission={submission} onChanged={onCommentPosted} />
@@ -194,7 +233,7 @@ export default function QAReviewModal({
               </span>
             </div>
             {checklist.map((row, i) => {
-              // A base item is the same checklist for every agent, so it can't be removed —
+              // A base item is the same checklist for every agent, so it can't be removed,
               // only an item a specific agent added themselves (not part of baseItems) can be.
               const isBaseItem = baseItems.some((b) => b.toLowerCase() === row.item.toLowerCase())
               return (
@@ -343,7 +382,7 @@ export default function QAReviewModal({
         title="Remove item?"
         message={
           <>
-            {`This permanently removes "${checklist[pendingRemoveIndex]?.item}" from your personal checklist — it won't show up on any future review either, not just this one.`}
+            {`This permanently removes "${checklist[pendingRemoveIndex]?.item}" from your personal checklist. It won't show up on any future review either, not just this one.`}
             {removeItemError && (
               <>
                 <br />

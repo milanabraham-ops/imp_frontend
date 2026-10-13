@@ -20,7 +20,7 @@ export const RANGE_OPTIONS = [
 ]
 
 export function formatCompact(n) {
-  if (n === null || n === undefined) return '—'
+  if (n === null || n === undefined) return '-'
   if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
   if (Math.abs(n) >= 1_000) return `${(n / 1_000).toFixed(1)}K`
   return `${n}`

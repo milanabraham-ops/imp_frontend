@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import SubmissionDetailSections from './SubmissionDetailSections'
-import CommentThread from '../common/CommentThread'
 import ForwardingNumbersField from '../common/ForwardingNumbersField'
 import { useEscapeClose } from '../../hooks/useEscapeClose'
 
@@ -41,9 +40,8 @@ export default function SubmissionDetailModal({ submission, onClose, onCommentPo
         </div>
 
         <div className="detail-modal-body">
-          <SubmissionDetailSections submission={submission} />
+          <SubmissionDetailSections submission={submission} onCommentPosted={onCommentPosted} />
           <ForwardingNumbersField submission={submission} onChanged={onCommentPosted} />
-          <CommentThread submission={submission} onPosted={onCommentPosted} />
         </div>
       </div>
     </div>

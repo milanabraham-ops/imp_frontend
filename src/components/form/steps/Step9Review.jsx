@@ -96,7 +96,7 @@ export default function Step9Review({ data, update, goToStep, isEditMode }) {
             <h3>Message to Your Team</h3>
           </div>
           <div className="field" style={{ marginTop: 12 }}>
-            <label>Posted to your implementation Chat space when you submit — edit as needed</label>
+            <label>Posted to your implementation Chat space when you submit, edit as needed</label>
             <textarea
               style={{ minHeight: 100 }}
               value={data.pocMessage}

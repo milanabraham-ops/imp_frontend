@@ -21,7 +21,7 @@ function formatDate(value) {
 const BLANK_FORM = { name: '', email: '', role: 'poc', isTestAccount: false, chatUserId: '' }
 
 // The numeric ID has to be looked up externally (Directory API, People API, or captured from a
-// browser network request while typing an @-mention) — there's nothing to validate it against
+// browser network request while typing an @-mention), there's nothing to validate it against
 // here, so this is just a plain text field, saved on blur like the rest of the app's inline edits
 // (ForwardingNumbersField, etc.) rather than firing a request on every keystroke.
 function ChatIdCell({ user, saving, onSave }) {
@@ -138,7 +138,7 @@ export default function AdminUsers() {
       const body = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(body.error || 'Failed to reset password')
       setUsers((prev) => prev.map((u) => (u.id === pendingReset.id ? body : u)))
-      showToast(`Password reset for ${pendingReset.name} — they'll need to change it on next login.`)
+      showToast(`Password reset for ${pendingReset.name}. They'll need to change it on next login.`)
       setPendingReset(null)
     } catch (err) {
       showToast(err.message || 'Failed to reset password', 'error')
@@ -198,9 +198,9 @@ export default function AdminUsers() {
       const body = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(body.error || 'Failed to purge test data')
       showToast(
-        `Purged ${body.submissionsDeleted} submission${body.submissionsDeleted === 1 ? '' : 's'} and ${body.groupsDeleted} group${
+        `Purged ${body.submissionsDeleted} submission${body.submissionsDeleted === 1 ? '' : 's'}, ${body.groupsDeleted} group${
           body.groupsDeleted === 1 ? '' : 's'
-        }.`,
+        }, and ${body.auditLogsDeleted || 0} audit log entr${body.auditLogsDeleted === 1 ? 'y' : 'ies'}.`,
       )
       setPurgeOpen(false)
     } catch (err) {
@@ -414,7 +414,7 @@ export default function AdminUsers() {
       <ConfirmDialog
         open={purgeOpen}
         title="Purge test data?"
-        message="Permanently deletes every submission and group marked as test data — along with their uploaded files and Google Sheet rows — everywhere across the app. Real accounts and data are untouched, and test accounts themselves stay intact and reusable."
+        message="Permanently deletes every submission and group marked as test data, along with their uploaded files and Google Sheet rows, everywhere across the app. Real accounts and data are untouched, and test accounts themselves stay intact and reusable."
         confirmLabel="Purge Everything"
         danger
         busy={purging}

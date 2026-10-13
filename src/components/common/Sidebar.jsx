@@ -14,7 +14,7 @@ const NAV_ITEMS = [
     icon: 'ti-layout-dashboard',
     roles: ['poc', 'admin'],
     badge: (b) => b.pocHandover,
-    commentBadge: (b) => b.comment,
+    commentBadge: (b) => b.sectionComment,
   },
   { to: '/new', label: 'New Submission', icon: 'ti-plus', roles: ['poc', 'admin'] },
   {
@@ -25,7 +25,7 @@ const NAV_ITEMS = [
     icon: 'ti-layout-kanban',
     roles: ['specialist', 'qa', 'admin'],
     badge: (b) => b.newRequest || b.qaHandoff || b.pocEdit,
-    commentBadge: (b) => b.comment,
+    commentBadge: (b) => b.sectionComment,
   },
   {
     // Its own separate board from Pipeline — PMS integration work, visible to every role (a POC

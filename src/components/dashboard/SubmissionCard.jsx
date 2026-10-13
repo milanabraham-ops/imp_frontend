@@ -73,7 +73,7 @@ export default function SubmissionCard({
     unseenIds &&
     (unseenIds.newRequest.has(s._id) ||
       unseenIds.qaHandoff.has(s._id) ||
-      unseenIds.comment.has(s._id) ||
+      unseenIds.sectionComment.has(s._id) ||
       unseenIds.pocHandover.has(s._id) ||
       unseenIds.pocEdit.has(s._id))
 
@@ -92,7 +92,7 @@ export default function SubmissionCard({
                 unseenIds.qaHandoff.has(s._id) ||
                 unseenIds.pocHandover.has(s._id) ||
                 unseenIds.pocEdit.has(s._id)) && <span className="dash-nav-badge" title="New activity" />}
-              {unseenIds.comment.has(s._id) && <span className="dash-nav-badge comment" title="New comment" />}
+              {unseenIds.sectionComment.has(s._id) && <span className="dash-nav-badge comment" title="New comment" />}
             </span>
           )}
           <span className="kanban-card-title-text">{s.clientName || 'Untitled'}</span>

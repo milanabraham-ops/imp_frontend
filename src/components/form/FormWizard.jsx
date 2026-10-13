@@ -317,7 +317,7 @@ export default function FormWizard({ mode = 'create' }) {
                     <div className="info-box">
                       <i className="ti ti-info-circle"></i>
                       <span>
-                        You have an unsaved draft{pendingDraft.savedAt ? ` from ${new Date(pendingDraft.savedAt).toLocaleString()}` : ''} — restore
+                        You have an unsaved draft{pendingDraft.savedAt ? ` from ${new Date(pendingDraft.savedAt).toLocaleString()}` : ''}. Restore
                         it, or discard it and start fresh?
                       </span>
                       <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexShrink: 0 }}>

@@ -8,7 +8,16 @@ const NotificationContext = createContext(null)
 // Single source of truth for every notification category — everything else below (empty-state
 // shapes, localStorage merge, badge reset) is derived from this list, so adding a category is a
 // one-line change here instead of five scattered edits.
-const CATEGORIES = ['newRequest', 'qaHandoff', 'pocHandover', 'comment', 'pocEdit', 'newIntegration', 'integrationComplete']
+const CATEGORIES = [
+  'newRequest',
+  'qaHandoff',
+  'pocHandover',
+  'comment',
+  'sectionComment',
+  'pocEdit',
+  'newIntegration',
+  'integrationComplete',
+]
 const POLL_MS = 5000
 
 function mapOf(fn) {
@@ -106,9 +115,19 @@ function relevantEvents(submissions, groups, role, userId) {
     const mine = (s.comments || []).filter(
       (c) => String(c.notifyUserId) === String(userId) || (c.mentions || []).some((id) => String(id) === String(userId)),
     )
-    if (mine.length) {
-      const latest = mine.reduce((max, c) => (!max || new Date(c.createdAt) > new Date(max) ? c.createdAt : max), null)
-      events.comment.push({ id: s._id, at: latest, message: `New comment on ${submissionLabel(s)}` })
+    // Split by comment.section — null is the general thread (IntegrationEditModal/QAReviewModal,
+    // surfaced on the Integrations nav/board), anything else is one of the submission "View"
+    // modal's per-section threads (SubmissionDetailSections, surfaced on Accounts/Pipeline). Same
+    // submission can carry both at once; each needs its own category so opening one thread's view
+    // doesn't silently mark the other's unrelated comment as seen too.
+    const general = mine.filter((c) => !c.section)
+    const sectioned = mine.filter((c) => c.section)
+    const latestOf = (list) => list.reduce((max, c) => (!max || new Date(c.createdAt) > new Date(max) ? c.createdAt : max), null)
+    if (general.length) {
+      events.comment.push({ id: s._id, at: latestOf(general), message: `New comment on ${submissionLabel(s)}` })
+    }
+    if (sectioned.length) {
+      events.sectionComment.push({ id: s._id, at: latestOf(sectioned), message: `New comment on ${submissionLabel(s)}` })
     }
   }
 

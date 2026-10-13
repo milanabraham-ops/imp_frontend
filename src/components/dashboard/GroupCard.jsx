@@ -8,7 +8,7 @@ function formatGroupLabel(g) {
   }`
 }
 
-// A group never appears as individual location cards at this level — that would double-count
+// A group never appears as individual location cards at this level, that would double-count
 // (and double-clutter) an "Accounts" view whose whole point is one entry per client relationship.
 // Never draggable (there's no single stage for several locations that may each be somewhere
 // different); "View Locations" drills into the group's own board instead.
@@ -41,7 +41,7 @@ export default function GroupCard({ group, onDelete }) {
           <i className="ti ti-user-circle"></i> Specialists
         </span>
         <div className="kanban-card-row-value">
-          <span className="review-value">{group.specialists?.length ? group.specialists.join(', ') : '—'}</span>
+          <span className="review-value">{group.specialists?.length ? group.specialists.join(', ') : '-'}</span>
         </div>
       </div>
 

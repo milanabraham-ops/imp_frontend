@@ -7,7 +7,7 @@ import { usePmsDocs } from '../../hooks/usePmsDocs'
 import '../form/form.css'
 
 // Google Docs/Sheets/Slides/Drive's own "edit"/"view" URLs (what sharing normally hands you)
-// refuse to be framed — only their dedicated /preview form is actually embeddable. Rewriting to
+// refuse to be framed, only their dedicated /preview form is actually embeddable. Rewriting to
 // that when the link is recognizably one of these (by file id, regardless of exact suffix/query
 // string) is what makes the thumbnail below work for the common case without the admin needing to
 // know to paste the "right" URL; anything else is framed as-is, best effort.
@@ -19,12 +19,12 @@ function toEmbeddableUrl(url) {
   return url
 }
 
-// A plain reference list, not a workflow board — every PMS an admin has registered in Settings
+// A plain reference list, not a workflow board: every PMS an admin has registered in Settings
 // (see AdminSettings' PMS Integration Docs panel), each card a small purely-decorative preview of
-// its guide's first page (not an interactive embed — the real thing opens in a new tab on click).
+// its guide's first page (not an interactive embed, the real thing opens in a new tab on click).
 // The preview shows the FULL page, not a cropped sliver: the iframe renders at a generous natural
-// size (see .pms-doc-card-frame in form.css) — large enough that the embedded viewer doesn't need
-// its own scrollbars to show one page — and is then shrunk as a whole via CSS transform: scale()
+// size (see .pms-doc-card-frame in form.css), large enough that the embedded viewer doesn't need
+// its own scrollbars to show one page, and is then shrunk as a whole via CSS transform: scale()
 // to fit the small card, with the wrapper clipping anything beyond it. pointer-events: none keeps
 // it inert either way. Visible to every role: anyone filling in or reviewing a submission's PMS
 // Integration section may need to check what a given PMS requires, not just whoever's actively
@@ -50,7 +50,7 @@ export default function IntegrationDocsPage() {
           <div className="dash-main-header">
             <div>
               <h1>Integration Docs</h1>
-              <p>Every PMS's integration guide, added by an admin — check here any time you need to know what's required for one.</p>
+              <p>Every PMS's integration guide, added by an admin. Check here any time you need to know what's required for one.</p>
             </div>
           </div>
 

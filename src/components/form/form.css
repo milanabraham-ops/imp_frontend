@@ -475,11 +475,40 @@
   padding: 14px 16px;
   margin-bottom: 14px;
 }
+.voicestack-form .review-section.has-comments {
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
 .voicestack-form .review-section-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 10px; padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
 }
+.voicestack-form .review-section-header .btn-sm { flex-shrink: 0; }
+.voicestack-form .review-section > .comment-thread {
+  margin-top: 12px; margin-bottom: 0;
+  background: var(--bg2, var(--bg3));
+}
+
+/* Right-click "Add comment" menu */
+.voicestack-form .section-context-menu {
+  position: fixed;
+  z-index: 1000;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  padding: 4px;
+  min-width: 160px;
+}
+.voicestack-form .section-context-menu button {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; text-align: left;
+  padding: 8px 10px; font-size: 13px;
+  background: none; border: none; border-radius: var(--radius);
+  color: var(--text); cursor: pointer;
+}
+.voicestack-form .section-context-menu button:hover { background: var(--bg3); }
 .voicestack-form .review-section-header h3 { font-size: 14px; font-weight: 600; margin: 0; color: var(--text); }
 .voicestack-form .review-list { display: flex; flex-direction: column; }
 .voicestack-form .review-row {
@@ -923,3 +952,39 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: none; }
 }
+
+/* Update banner — rendered at the app root (App.jsx), outside any .voicestack-form page wrapper,
+   so it can't rely on that class's CSS variables or .btn-sm/.icon-btn styles; it's fully
+   self-contained instead, with its own light/dark colors. */
+.update-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 2100;
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px;
+  font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: var(--update-bg); color: var(--update-text); border-bottom: 1px solid var(--update-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+  box-sizing: border-box;
+  animation: toast-in .18s ease;
+}
+.update-banner:not([data-theme='light']) {
+  --update-bg: #171b28; --update-text: #eef1f7; --update-border: #262b3b; --update-accent: #6bb0ff;
+}
+.update-banner[data-theme='light'] {
+  --update-bg: #ffffff; --update-text: #1a1a2e; --update-border: #e2e8f0; --update-accent: #185fa5;
+}
+.update-banner > i.ti-sparkles { font-size: 18px; flex-shrink: 0; color: var(--update-accent); margin-top: 1px; }
+.update-banner-body { flex: 1; min-width: 0; }
+.update-banner-body strong { display: block; margin-bottom: 4px; }
+.update-banner-body ul { margin: 0; padding-left: 18px; }
+.update-banner-body li { line-height: 1.5; }
+.update-banner-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.update-banner-reload {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--update-accent);
+  background: var(--update-accent); color: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+}
+.update-banner-dismiss {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 6px; border: none; background: none;
+  color: inherit; opacity: .7; cursor: pointer;
+}
+.update-banner-dismiss:hover { opacity: 1; background: rgba(128, 128, 128, 0.15); }

@@ -20,6 +20,7 @@ import IntegrationBoard from './components/dashboard/IntegrationBoard'
 import IntegrationGroupDetail from './components/dashboard/IntegrationGroupDetail'
 import ForwardingNumbersPage from './components/dashboard/ForwardingNumbersPage'
 import IntegrationDocsPage from './components/dashboard/IntegrationDocsPage'
+import UpdateBanner from './components/common/UpdateBanner'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <AuthProvider>
           <ToastProvider>
             <NotificationProvider>
+              <UpdateBanner />
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/change-password" element={<ChangePasswordPage />} />

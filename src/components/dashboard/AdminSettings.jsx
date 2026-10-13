@@ -320,7 +320,7 @@ export default function AdminSettings() {
                 <p>
                   How long detailed audit-log entries (take-overs, status changes, edits, comments, etc.) are kept before
                   being cleared out automatically. Who submitted/reviewed each location, its status, and who last touched
-                  it are kept permanently regardless — shortening this only trims the detailed trail.
+                  it are kept permanently regardless. Shortening this only trims the detailed trail.
                 </p>
               </div>
               <div className="field tight">
@@ -400,7 +400,7 @@ export default function AdminSettings() {
               <h2>PMS Integration Docs</h2>
               <p>
                 Every PMS an admin adds here shows up as a pickable option on the form's PMS dropdown. A guide link is
-                optional — add the PMS by name alone if its doc isn't written yet, and attach the link later once it
+                optional. Add the PMS by name alone if its doc isn't written yet, and attach the link later once it
                 is. When picked, a POC sees a link to this guide instead of typing credentials straight into the
                 submission.
               </p>

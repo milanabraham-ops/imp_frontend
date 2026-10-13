@@ -166,7 +166,7 @@ export default function PipelineBoard() {
                   onView={() => {
                     actions.setViewing(card)
                     markSeen('newRequest', card._id)
-                    markSeen('comment', card._id)
+                    markSeen('sectionComment', card._id)
                     markSeen('pocEdit', card._id)
                   }}
                   onReview={() => actions.openReview(card)}

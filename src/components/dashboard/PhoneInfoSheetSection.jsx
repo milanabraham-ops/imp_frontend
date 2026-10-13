@@ -3,12 +3,12 @@ import { API_URL } from '../../context/AuthContext'
 import { apiFetch } from '../../lib/apiFetch'
 import { useToast } from '../../context/ToastContext'
 
-// Test feature (see checkpoint tag `checkpoint-before-phone-sheet-v2`) — upload-only, never typed
+// Test feature (see checkpoint tag `checkpoint-before-phone-sheet-v2`), upload-only, never typed
 // directly into the app: download the template (phone-info-sheet-template.xlsx, a two-tab
-// workbook — Devices sheet, Agents sheet), fill it in, upload it back here. A .csv with the same
+// workbook, Devices sheet, Agents sheet), fill it in, upload it back here. A .csv with the same
 // two tables stacked (blank line between) also still parses, for anyone who'd rather hand-edit
 // plain text. Works both before this location has been submitted yet (parsed statelessly, staged
-// like any other Step 6 field — see submissionController's parsePhoneSheet) and after (parsed
+// like any other Step 6 field, see submissionController's parsePhoneSheet) and after (parsed
 // AND saved in one step, via submissionId). Either way the result is shown read-only below.
 export default function PhoneInfoSheetSection({ submissionId, devices, agents, onDevicesChange, onAgentsChange }) {
   const { showToast } = useToast()
@@ -42,7 +42,7 @@ export default function PhoneInfoSheetSection({ submissionId, devices, agents, o
     <div style={{ marginBottom: 20 }}>
       <div className="hint" style={{ marginBottom: 10 }}>
         {devices.length} device{devices.length === 1 ? '' : 's'} · {agents.length} agent{agents.length === 1 ? '' : 's'} captured so far. Fill in the
-        template (Devices and Agents are separate tabs) and upload it back — .xlsx or .csv both work.
+        template (Devices and Agents are separate tabs) and upload it back. .xlsx or .csv both work.
       </div>
 
       <div className="dash-table-toolbar" style={{ marginBottom: 10 }}>

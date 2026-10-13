@@ -374,7 +374,7 @@ export default function GroupDetail() {
                   onView={() => {
                     actions.setViewing(card)
                     markSeen('pocHandover', card._id)
-                    markSeen('comment', card._id)
+                    markSeen('sectionComment', card._id)
                     markSeen('pocEdit', card._id)
                   }}
                   onEdit={() => navigate(`/submissions/${card._id}`)}
@@ -457,7 +457,7 @@ export default function GroupDetail() {
       <ConfirmDialog
         open={pendingDeleteGroup}
         title="Delete group?"
-        message={`This permanently deletes "${groupMeta?.clientName || 'Untitled'}" and all ${locations.length} of its location${locations.length === 1 ? '' : 's'} — this can't be undone.`}
+        message={`This permanently deletes "${groupMeta?.clientName || 'Untitled'}" and all ${locations.length} of its location${locations.length === 1 ? '' : 's'}. This can't be undone.`}
         confirmLabel="Delete Group"
         danger
         busy={deletingGroup}

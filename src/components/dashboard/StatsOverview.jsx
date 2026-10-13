@@ -19,20 +19,20 @@ function statusCount(statusBreakdown, label) {
   return (statusBreakdown || []).find((s) => s.status === label)?.count || 0
 }
 
-// Market is nominal (no order), unlike Configuration Status — a plain categorical breakdown.
+// Market is nominal (no order), unlike Configuration Status, a plain categorical breakdown.
 function marketSegments(marketBreakdown, theme) {
   return (marketBreakdown || []).map((m, i) => ({ label: m.market, value: m.count, color: categoricalColor(theme, i) }))
 }
 
 // Leaderboards are keyed on a name (specialist/QA/POC) that also appears on Pipeline cards as
-// implementationSpecialist/qaAgent/poc — reuses the board's own free-text search (already matches
+// implementationSpecialist/qaAgent/poc, reuses the board's own free-text search (already matches
 // against those fields) as the drill-down, rather than adding a second, parallel filtering scheme.
 function useLeaderboardDrilldown() {
   const navigate = useNavigate()
   return (bar) => navigate(`/pipeline?q=${encodeURIComponent(bar.label)}`)
 }
 
-// Same idea, but for the "In progress" / "In QA" / "Completed" tiles — these track
+// Same idea, but for the "In progress" / "In QA" / "Completed" tiles, these track
 // configurationStatus, which the Pipeline board's own kanban columns are already bucketed by
 // (see pipelineHelpers COLUMNS), so drilling in just means scrolling to and flashing that column
 // rather than adding a second, competing status filter.
@@ -68,7 +68,7 @@ export default function StatsOverview() {
   const rangeQuery = isCustomReady ? `startDate=${customStart}&endDate=${customEnd}` : `range=${range}`
 
   const load = useCallback(async () => {
-    // Custom is selected but not both dates are picked yet — wait rather than firing a
+    // Custom is selected but not both dates are picked yet, wait rather than firing a
     // half-specified request (which would just fall back to whatever `range` used to be).
     if (range === 'custom' && !isCustomReady) return
     setLoading(true)
@@ -196,7 +196,7 @@ function PocStats({ data, theme, drilldown, statusDrilldown }) {
           icon="ti-clock"
           tone="warning"
           label="Avg days to configure"
-          value={mine.avgDaysToConfigure ?? '—'}
+          value={mine.avgDaysToConfigure ?? '-'}
           suffix={mine.avgDaysToConfigure != null ? ' d' : ''}
         />
       </div>
@@ -250,7 +250,7 @@ function PersonStats({ data, mineKey, mineWord, drilldown }) {
             icon="ti-clock"
             tone="warning"
             label="Your avg days"
-            value={mine.avgDaysToConfigure ?? '—'}
+            value={mine.avgDaysToConfigure ?? '-'}
             suffix={mine.avgDaysToConfigure != null ? ' d' : ''}
           />
         )}
@@ -293,7 +293,7 @@ function PersonStats({ data, mineKey, mineWord, drilldown }) {
           </div>
         </div>
       ) : (
-        // Only 2 comparable axes here (no reliable speed metric for QA) — a radar needs 3+ points
+        // Only 2 comparable axes here (no reliable speed metric for QA), a radar needs 3+ points
         // to read as a shape, so skip it; the tiles above already carry the you-vs-team numbers.
         <div className="chart-card">
           <div className="chart-card-header">
@@ -346,7 +346,7 @@ function AdminStats({ data, theme, drilldown, statusDrilldown }) {
           icon="ti-clock"
           tone="accent"
           label="Avg days to configure"
-          value={overview.avgDaysToConfigure ?? '—'}
+          value={overview.avgDaysToConfigure ?? '-'}
           suffix={overview.avgDaysToConfigure != null ? ' d' : ''}
         />
       </div>

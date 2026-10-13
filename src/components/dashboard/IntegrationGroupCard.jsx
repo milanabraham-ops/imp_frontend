@@ -6,10 +6,10 @@ function formatLocationLabel(g) {
   return `${g.integrationLocationCount || 0} of ${g.locationCount || 0} location${g.locationCount === 1 ? '' : 's'} need integration`
 }
 
-// Same "one card per client relationship" rule as GroupCard — never individual location cards at
+// Same "one card per client relationship" rule as GroupCard, never individual location cards at
 // this level, and never draggable (no single stage for locations that may each be somewhere
 // different). "View" drills into this group's own integration board (IntegrationGroupDetail),
-// scoped to just the locations that actually need one. Deliberately shows only PMS system names —
+// scoped to just the locations that actually need one. Deliberately shows only PMS system names,
 // no server access or other sensitive details ever render on a card face, same rule as IntegrationCard.
 export default function IntegrationGroupCard({ group }) {
   return (
@@ -39,7 +39,7 @@ export default function IntegrationGroupCard({ group }) {
           <i className="ti ti-user-circle"></i> Integration Agents
         </span>
         <div className="kanban-card-row-value">
-          <span className="review-value">{group.integrationAgents?.length ? group.integrationAgents.join(', ') : '—'}</span>
+          <span className="review-value">{group.integrationAgents?.length ? group.integrationAgents.join(', ') : '-'}</span>
         </div>
       </div>
 

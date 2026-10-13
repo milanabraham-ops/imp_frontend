@@ -21,7 +21,7 @@ import { isMine } from '../../lib/isMine'
 import '../form/form.css'
 import './pipelineBoard.css'
 
-// Accounts — an overview of every location you (or, for admin, anyone) submitted. Grouped
+// Accounts: an overview of every location you (or, for admin, anyone) submitted. Grouped
 // locations show as one card for their group (never as individual cards here, or they'd be
 // double-counted) with a drill-in into their own board. A POC can't change any tracking field on
 // their own submission (the backend blocks it), so their cards are read-only; admin gets the same
@@ -62,7 +62,7 @@ export default function Dashboard() {
       const subsBody = await subsRes.json()
       const groupsBody = await groupsRes.json()
       const agentsBody = agentsRes.ok ? await agentsRes.json() : []
-      // Grouped locations are shown via their group's card instead — never as their own
+      // Grouped locations are shown via their group's card instead, never as their own
       // top-level card, or they'd be double-counted here and in every stat tile.
       const allSubs = Array.isArray(subsBody) ? subsBody : subsBody.submissions || []
       setSubmissions(allSubs.filter((s) => !s.group))
@@ -206,7 +206,7 @@ export default function Dashboard() {
               <div className="stat-label">Submitted This Month</div>
             </div>
             <div className="stat-tile">
-              <div className="stat-value">{mostRecent ? formatDate(mostRecent) : '—'}</div>
+              <div className="stat-value">{mostRecent ? formatDate(mostRecent) : '-'}</div>
               <div className="stat-label">Most Recent Submission</div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function Dashboard() {
                     onView={() => {
                       actions.setViewing(card)
                       markSeen('pocHandover', card._id)
-                      markSeen('comment', card._id)
+                      markSeen('sectionComment', card._id)
                       markSeen('pocEdit', card._id)
                     }}
                     onEdit={() => {
@@ -367,7 +367,7 @@ export default function Dashboard() {
       <ConfirmDialog
         open={!!pendingDeleteGroup}
         title="Delete group?"
-        message={pendingDeleteGroup && `This permanently deletes "${pendingDeleteGroup.clientName || 'Untitled'}" and all ${pendingDeleteGroup.locationCount || 0} of its location${pendingDeleteGroup.locationCount === 1 ? '' : 's'} — this can't be undone.`}
+        message={pendingDeleteGroup && `This permanently deletes "${pendingDeleteGroup.clientName || 'Untitled'}" and all ${pendingDeleteGroup.locationCount || 0} of its location${pendingDeleteGroup.locationCount === 1 ? '' : 's'}. This can't be undone.`}
         confirmLabel="Delete Group"
         danger
         busy={deletingGroup}

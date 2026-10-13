@@ -58,7 +58,11 @@ function renderCommentText(text, staffNames) {
 // A Sheets-comment-style discussion thread on one submission — shared by every view that shows
 // it (specialist/QA detail views, the POC's own submission view), so there's exactly one place
 // that knows how to post/render/edit/delete a comment rather than several separate copies.
-export default function CommentThread({ submission, onPosted }) {
+//
+// `section` scopes the thread to one review section (see SubmissionDetailSections) instead of the
+// whole submission — only that section's comments are shown, and new ones are tagged with it.
+// Left undefined/null, this is the general thread: every comment with no section at all.
+export default function CommentThread({ submission, section = null, heading = 'Comments', focusKey, onPosted }) {
   const { user } = useAuth()
   const { showToast } = useToast()
   const [text, setText] = useState('')
@@ -69,8 +73,8 @@ export default function CommentThread({ submission, onPosted }) {
   const [editSaving, setEditSaving] = useState(false)
   const [pendingDeleteId, setPendingDeleteId] = useState(null)
   const [deleting, setDeleting] = useState(false)
-  const [mention, setMention] = useState(null) // { query, start } — null when no "@token" is active
-  const comments = submission?.comments || []
+  const [mention, setMention] = useState(null) // { query, start }, null when no "@token" is active
+  const comments = (submission?.comments || []).filter((c) => (c.section || null) === section)
 
   // Same GET /agents the reassign dropdowns use — now readable by a POC too (see agentRoutes.js),
   // since this composer is also used on a POC's own submission view.
@@ -94,6 +98,14 @@ export default function CommentThread({ submission, onPosted }) {
   // Reused for both the composer and an in-progress edit — see useDropdown.js for the
   // portal/positioning/click-away mechanics this shares with SelectInput/ComboBoxInput.
   const { open: mentionOpen, setOpen: setMentionOpen, anchorRef, menuRef, style } = useDropdown()
+
+  // Lets a caller (the section's right-click "Add comment" menu) drop focus straight into the
+  // composer the moment this thread is opened, rather than making the user find and click it
+  // themselves — bump focusKey any time that should happen again.
+  useEffect(() => {
+    if (focusKey) anchorRef.current?.focus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusKey])
 
   const filteredAgents = mention
     ? agents.filter((a) => a.name.toLowerCase().includes(mention.query.toLowerCase())).slice(0, 8)
@@ -157,7 +169,7 @@ export default function CommentThread({ submission, onPosted }) {
       const res = await apiFetch(`${API_URL}/submissions/${submission._id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: trimmed }),
+        body: JSON.stringify({ text: trimmed, section }),
       })
       const body = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(body.error || 'Failed to post comment')
@@ -240,7 +252,7 @@ export default function CommentThread({ submission, onPosted }) {
   return (
     <div className="review-section comment-thread">
       <div className="review-section-header">
-        <h3>Comments</h3>
+        <h3>{heading}</h3>
         <span className="hint" style={{ margin: 0 }}>
           {comments.length} comment{comments.length === 1 ? '' : 's'}
         </span>
