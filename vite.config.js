@@ -35,4 +35,17 @@ function releaseNotesAsset() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), releaseNotesAsset()],
+  server: {
+    // Mirrors the Vercel rewrite in vercel.json — API_URL (apiUrl.js) is always the relative '/api'
+    // so the browser treats the backend as same-origin (see that file for why), which only works
+    // if *something* actually forwards it to the real backend. In production that's Vercel's edge;
+    // locally it's this dev-server proxy. VITE_DEV_API_TARGET lets this point at a backend running
+    // somewhere other than localhost:5000 without editing this file.
+    proxy: {
+      '/api': {
+        target: process.env.VITE_DEV_API_TARGET || 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
