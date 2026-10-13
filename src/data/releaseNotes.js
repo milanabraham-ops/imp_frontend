@@ -5,6 +5,10 @@
 // already-open tab can read what changed without having to load any of the new code first.
 export const RELEASE_NOTES = [
   {
+    version: 2,
+    items: ['Fixed an issue where reloading the page could log you out.'],
+  },
+  {
     version: 1,
     items: ['Session token rotation bug causing random logouts has been fixed.'],
   },
