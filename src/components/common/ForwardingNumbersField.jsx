@@ -12,9 +12,13 @@ import { useToast } from '../../context/ToastContext'
 // another line just collapses back down instead of listing it twice.
 //
 // The Yes/No toggle alongside it is the same `forwardingNumberRequired` field the intake wizard's
-// own Phone Numbers & Hours step sets, surfaced here too (not just there) so staff reviewing an
-// account from the submission detail view, QA review, or this table can flip it without having to
-// reopen the full wizard. ForwardingNumbersPage only lists accounts where it's on.
+// own Phone Numbers & Hours step sets, surfaced here too (not just there) so a POC (or staff
+// reviewing their account from the submission detail view / QA review) can flip it on later if an
+// account that didn't need forwarding turns out to need one after all, then fill in the numbers
+// right there. The toggle itself is only shown in non-compact mode: `compact` is only ever used on
+// ForwardingNumbersPage's own table, which already filters down to accounts where this is on, so
+// repeating the toggle on every row there would just be redundant. The number field is only shown
+// once this is actually on, nothing to enter until then.
 export default function ForwardingNumbersField({ submission, onChanged, compact = false }) {
   const { showToast } = useToast()
   const [value, setValue] = useState(submission?.forwardingNumbers || '')
@@ -67,6 +71,8 @@ export default function ForwardingNumbersField({ submission, onChanged, compact 
     }
   }
 
+  const required = Boolean(submission?.forwardingNumberRequired)
+
   return (
     <div className={compact ? 'forwarding-numbers-compact' : 'review-section'}>
       {!compact && (
@@ -75,46 +81,43 @@ export default function ForwardingNumbersField({ submission, onChanged, compact 
         </div>
       )}
       {!compact && <div className="hint" style={{ marginBottom: 6 }}>One number per line. Anyone with access to this account can edit this.</div>}
-      <div className="forwarding-required-toggle">
-        <span>Required?</span>
-        <button
-          type="button"
-          className={`btn-sm${submission?.forwardingNumberRequired ? ' active' : ''}`}
-          disabled={requiredBusy}
-          onClick={() => setRequired(true)}
-        >
-          Yes
-        </button>
-        <button
-          type="button"
-          className={`btn-sm${submission?.forwardingNumberRequired ? '' : ' active'}`}
-          disabled={requiredBusy}
-          onClick={() => setRequired(false)}
-        >
-          No
-        </button>
-      </div>
-      <textarea
-        className="inline-edit-input forwarding-numbers-textarea"
-        placeholder="One forwarding number per line…"
-        value={value}
-        disabled={busy}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={save}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-            e.preventDefault()
-            save()
-          }
-        }}
-      />
       {!compact && (
-        <div style={{ marginTop: 6 }}>
-          <button type="button" className="btn-sm" disabled={!dirty || busy} onClick={save}>
-            {busy ? 'Saving…' : 'Save'}
+        <div className="forwarding-required-toggle">
+          <span>Required?</span>
+          <button type="button" className={`btn-sm${required ? ' active' : ''}`} disabled={requiredBusy} onClick={() => setRequired(true)}>
+            Yes
+          </button>
+          <button type="button" className={`btn-sm${required ? '' : ' active'}`} disabled={requiredBusy} onClick={() => setRequired(false)}>
+            No
           </button>
         </div>
       )}
+      {(compact || required) && (
+        <>
+          <textarea
+            className="inline-edit-input forwarding-numbers-textarea"
+            placeholder="One forwarding number per line…"
+            value={value}
+            disabled={busy}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={save}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                save()
+              }
+            }}
+          />
+          {!compact && (
+            <div style={{ marginTop: 6 }}>
+              <button type="button" className="btn-sm" disabled={!dirty || busy} onClick={save}>
+                {busy ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          )}
+        </>
+      )}
+      {!compact && !required && <div className="hint">Turn this on to add forwarding numbers for this account.</div>}
     </div>
   )
 }
