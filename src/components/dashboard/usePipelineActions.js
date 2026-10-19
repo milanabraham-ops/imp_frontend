@@ -134,10 +134,17 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
     if (ok) setHandoffTarget(null)
   }
 
-  // A row still flagged error/clarification means the account isn't actually fixed yet, the
-  // backend refuses a Completed save in this state too (submissionController.js); this is just the
-  // same check client-side so the button/outcome already matches before the round trip.
-  const hasUnresolvedQaFlags = (checklist) => checklist.some((row) => row.status === 'error' || row.status === 'clarification')
+  // An error always blocks completion, the backend refuses a Completed save in this state too
+  // (submissionController.js); this is just the same check client-side so the button/outcome
+  // already matches before the round trip. A clarification only blocks the FIRST time it's seen
+  // (reviewTarget.qaClarificationSeen, set server-side once a round's gone by with one
+  // outstanding), it's a question for whoever configured the account to answer, not a defect that
+  // needs re-verifying forever, once it's been through one round it shouldn't keep blocking.
+  const blocksQaCompletion = (checklist, submission) => {
+    const hasErrors = checklist.some((row) => row.status === 'error')
+    const hasClarifications = checklist.some((row) => row.status === 'clarification')
+    return hasErrors || (hasClarifications && !submission.qaClarificationSeen)
+  }
 
   const finalizeComplete = async (submission, checklist, message) => {
     setCompleting(true)
@@ -149,17 +156,17 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
   // Saves the checklist/notes and the message (so the specialist still sees exactly what's wrong),
   // but leaves configurationStatus at 'QA' instead of advancing it. The account stays right where
   // it is, flags and all, until whoever's fixing it is done and this gets reviewed again, rather
-  // than silently completing over unresolved errors.
+  // than silently completing over an unresolved error or an unanswered clarification.
   const saveWithUnresolvedFlags = async (submission, checklist, message) => {
     setCompleting(true)
-    const ok = await saveFields(submission, { qaChecklist: checklist, qaResultMessage: message }, 'Saved. Unresolved items need another look before this can be completed.')
+    const ok = await saveFields(submission, { qaChecklist: checklist, qaResultMessage: message }, 'Saved. This needs another look before it can be completed.')
     setCompleting(false)
     if (ok) setReviewTarget(null)
   }
 
   const requestMarkComplete = (checklist, message) => {
     if (!reviewTarget) return
-    if (hasUnresolvedQaFlags(checklist)) {
+    if (blocksQaCompletion(checklist, reviewTarget)) {
       saveWithUnresolvedFlags(reviewTarget, checklist, message)
       return
     }
@@ -183,11 +190,19 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
       .map((n) => n.trim())
       .filter(Boolean)
     const numbersBlock = numbers.length ? `\n\nForwarding numbers:\n${numbers.map((n) => `- ${n}`).join('\n')}` : ''
+    // A clarification can still be sitting on the checklist at handover time (completion only
+    // ever required it to have been through one round, see blocksQaCompletion above, not that it
+    // got resolved), carried into this message so the POC sees it too, not just whoever was in
+    // the QA/specialist Chat space when it was first raised.
+    const clarifications = (s.qaChecklist || []).filter((row) => row.status === 'clarification')
+    const clarificationsBlock = clarifications.length
+      ? `\n\nClarifications:\n${clarifications.map((row) => `- ${row.item}: ${row.note || 'No detail provided'}`).join('\n')}`
+      : ''
     // Tags the actual POC who submitted this if their Chat ID is on file (see AdminUsers.jsx >
     // Manage Access); otherwise falls back to pinging the whole POC space, same as before.
     const mention = s.pocChatUserId ? `<users/${s.pocChatUserId}>` : '<users/all>'
     setHandoverMessage(
-      `${mention} Hi Team, the implementation for *${s.clientName || 'Untitled'} (${s.locationName || 'Untitled location'})* is complete. Please reach out in case of any questions.${numbersBlock}`,
+      `${mention} Hi Team, the implementation for *${s.clientName || 'Untitled'} (${s.locationName || 'Untitled location'})* is complete. Please reach out in case of any questions.${numbersBlock}${clarificationsBlock}`,
     )
   }
 

@@ -5,6 +5,15 @@
 // already-open tab can read what changed without having to load any of the new code first.
 export const RELEASE_NOTES = [
   {
+    version: 3,
+    items: [
+      'Added a self-service "Forgot password" option on the login page.',
+      'Forwarding numbers are now optional per account, with date filtering and an Excel export on the Forwarding Numbers page.',
+      'QA can no longer mark a review complete while it still has unresolved errors. A clarification blocks completion the first time it comes up, but not on the recheck after.',
+      'Added a status message while the server is waking up.',
+    ],
+  },
+  {
     version: 2,
     items: ['Fixed an issue where reloading the page could log you out.'],
   },

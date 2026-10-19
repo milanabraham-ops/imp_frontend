@@ -1,25 +1,25 @@
 import { useEffect, useState } from 'react'
-import { RELEASE_NOTES } from '../data/releaseNotes'
 
-const SHOWN_KEY = 'voicestack.shownReleaseVersion'
-const CURRENT_VERSION = RELEASE_NOTES[0]?.version
+const SEEN_KEY = 'voicestack.lastSeenReleaseVersion'
 
-function markShown(version) {
+function markSeen(version) {
   try {
-    localStorage.setItem(SHOWN_KEY, String(version))
+    localStorage.setItem(SEEN_KEY, String(version))
   } catch {
     // can't persist it, it may show again next check, not fatal
   }
 }
 
-// Checks the always-fresh, unhashed /release-notes.json (not whatever's baked into this tab's own
-// bundle) so a tab left open across a deploy can notice the gap without needing the new JS loaded
-// first, same reasoning as the "already shown" flag living in localStorage rather than state
-// that'd reset on every reload/login: a version is shown at most once, ever, on this device. No
-// background timer either, there's no way to be pushed the moment a deploy actually lands without
-// real server infrastructure (a webhook + a live connection to every open tab), so this just checks
-// at moments that are already natural: once on load, and again whenever the tab is switched back
-// to, rather than polling on a schedule for no particular reason.
+// Compares the always-fresh, unhashed /release-notes.json against the last version THIS browser
+// has actually been shown (localStorage), not against whatever happens to be baked into the
+// current tab's own bundle. Comparing against the bundle's own version meant the banner could
+// never announce a release on the very first load of that release, by the time a tab has loaded
+// the code for version N, its own baked-in version already IS N, so there was nothing left to
+// detect, nobody ever saw version 2 for exactly this reason. Comparing against "have I personally
+// seen this one yet" instead means a fresh load right after a deploy still shows it. No background
+// timer either, there's no way to be pushed the moment a deploy actually lands without real server
+// infrastructure (a webhook + a live connection to every open tab), so this just checks at moments
+// that are already natural: once on load, and again whenever the tab is switched back to.
 export function useReleaseNotesCheck() {
   const [available, setAvailable] = useState(null)
 
@@ -32,19 +32,19 @@ export function useReleaseNotesCheck() {
         if (!res.ok) return
         const notes = await res.json()
         const latest = notes[0]
-        if (!latest || latest.version === CURRENT_VERSION) return
+        if (!latest) return
 
-        let shown = null
+        let seen = null
         try {
-          shown = localStorage.getItem(SHOWN_KEY)
+          seen = localStorage.getItem(SEEN_KEY)
         } catch {
           // storage unavailable, just re-prompt every check, not fatal
         }
-        if (String(shown) === String(latest.version)) return
-        // Marked the moment it's actually displayed, not only on an explicit dismiss/reload click ,
+        if (String(seen) === String(latest.version)) return
+        // Marked the moment it's actually displayed, not only on an explicit dismiss/reload click,
         // once shown once, it's done for this version, even if the tab is just closed or navigated
         // away from without either button ever being pressed.
-        markShown(latest.version)
+        markSeen(latest.version)
         if (!cancelled) setAvailable(latest)
       } catch {
         // offline, or the request was blocked, just try again next time the tab regains focus

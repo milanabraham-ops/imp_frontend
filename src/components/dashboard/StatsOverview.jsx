@@ -12,6 +12,7 @@ import BarChart from '../charts/BarChart'
 import PieChart from '../charts/PieChart'
 import RadarChart from '../charts/RadarChart'
 import { categoricalColor } from '../charts/chartTheme'
+import { downloadBlob } from '../../lib/downloadBlob'
 import '../form/form.css'
 import '../charts/charts.css'
 
@@ -95,15 +96,7 @@ export default function StatsOverview() {
     try {
       const res = await apiFetch(`${API_URL}/stats/export?${rangeQuery}`)
       if (!res.ok) throw new Error('Failed to export stats')
-      const blob = await res.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'stats-export.csv'
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      window.URL.revokeObjectURL(url)
+      downloadBlob(await res.blob(), 'stats-export.csv')
     } catch (err) {
       setError(err.message || 'Failed to export stats')
     } finally {

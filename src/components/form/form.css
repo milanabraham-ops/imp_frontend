@@ -956,11 +956,16 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   to { opacity: 1; transform: none; }
 }
 
-/* Update banner, rendered at the app root (App.jsx), outside any .voicestack-form page wrapper,
-   so it can't rely on that class's CSS variables or .btn-sm/.icon-btn styles; it's fully
-   self-contained instead, with its own light/dark colors. */
-.update-banner {
+/* Both banners below are rendered at the app root (App.jsx), outside any .voicestack-form page
+   wrapper, so neither can rely on that class's CSS variables or .btn-sm/.icon-btn styles; each is
+   fully self-contained instead, with its own light/dark colors. Stacked inside one shared fixed
+   wrapper (.top-banner-stack) rather than each being position:fixed on its own, so if both happen
+   to be visible at once they stack vertically instead of painting on top of each other. */
+.top-banner-stack {
   position: fixed; top: 0; left: 0; right: 0; z-index: 2100;
+  display: flex; flex-direction: column;
+}
+.update-banner {
   display: flex; align-items: flex-start; gap: 12px;
   padding: 12px 16px;
   font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
@@ -991,3 +996,26 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
   color: inherit; opacity: .7; cursor: pointer;
 }
 .update-banner-dismiss:hover { opacity: 1; background: rgba(128, 128, 128, 0.15); }
+
+/* Backend wake-up status, same self-contained-styling reasoning as .update-banner above. */
+.backend-status-banner {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px;
+  font-size: 12.5px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  line-height: 1.4;
+  box-sizing: border-box;
+  animation: toast-in .18s ease;
+}
+.backend-status-banner.waking { background: rgba(234, 179, 77, 0.14); color: #a9741c; border-bottom: 1px solid rgba(234, 179, 77, 0.35); }
+.backend-status-banner.ready { background: rgba(92, 201, 95, 0.14); color: #2f7a32; border-bottom: 1px solid rgba(92, 201, 95, 0.35); }
+.backend-status-banner.unreachable { background: rgba(240, 113, 110, 0.14); color: #a3302d; border-bottom: 1px solid rgba(240, 113, 110, 0.35); }
+.backend-status-banner:not([data-theme='light']).waking { color: #f0c97a; }
+.backend-status-banner:not([data-theme='light']).ready { color: #8fe192; }
+.backend-status-banner:not([data-theme='light']).unreachable { color: #ffc2c0; }
+.backend-status-banner i { font-size: 14px; flex-shrink: 0; }
+.backend-status-spinner {
+  width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%;
+  border: 2px solid rgba(234, 179, 77, 0.3); border-top-color: currentColor;
+  animation: backend-status-spin 0.8s linear infinite;
+}
+@keyframes backend-status-spin { to { transform: rotate(360deg); } }

@@ -113,6 +113,28 @@ export function AuthProvider({ children }) {
       }),
     )
 
+  // Neither of these establishes a session (no cookie/token in the response), so they skip
+  // handleAuthResponse entirely, just a plain "did it work" check with the server's own message.
+  const forgotPassword = async (email) => {
+    const res = await fetch(`${API_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(body.error || 'No resettable account found with that email')
+  }
+
+  const resetPassword = async (email, newPassword) => {
+    const res = await fetch(`${API_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, newPassword }),
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(body.error || 'Failed to reset password')
+  }
+
   // Clears local session state synchronously, before firing the server-side invalidation call —
   // callers immediately navigate away after calling this (see AccountMenu), so user/token need to
   // already be cleared by the time that navigation renders the next page, not after some await.
@@ -169,6 +191,8 @@ export function AuthProvider({ children }) {
         logout,
         updateAvatar,
         changePassword,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

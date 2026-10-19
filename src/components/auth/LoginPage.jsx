@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { roleHome } from '../../lib/roles'
 import GoogleSignInButton from './GoogleSignInButton'
@@ -77,6 +77,9 @@ export default function LoginPage() {
             <label>Password</label>
             <PasswordField value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          <Link to="/forgot-password" className="auth-forgot-link">
+            Forgot password?
+          </Link>
           <button type="submit" className="auth-btn-primary" disabled={submitting}>
             {submitting ? 'Signing in…' : 'Sign In'}
           </button>

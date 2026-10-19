@@ -6,6 +6,7 @@ import { NotificationProvider } from './context/NotificationContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import RequireRole from './components/auth/RequireRole'
 import LoginPage from './components/auth/LoginPage'
+import ForgotPasswordPage from './components/auth/ForgotPasswordPage'
 import ChangePasswordPage from './components/auth/ChangePasswordPage'
 import Dashboard from './components/dashboard/Dashboard'
 import StatsOverview from './components/dashboard/StatsOverview'
@@ -21,6 +22,7 @@ import IntegrationGroupDetail from './components/dashboard/IntegrationGroupDetai
 import ForwardingNumbersPage from './components/dashboard/ForwardingNumbersPage'
 import IntegrationDocsPage from './components/dashboard/IntegrationDocsPage'
 import UpdateBanner from './components/common/UpdateBanner'
+import BackendStatusBanner from './components/common/BackendStatusBanner'
 
 function App() {
   return (
@@ -29,9 +31,13 @@ function App() {
         <AuthProvider>
           <ToastProvider>
             <NotificationProvider>
-              <UpdateBanner />
+              <div className="top-banner-stack">
+                <BackendStatusBanner />
+                <UpdateBanner />
+              </div>
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/change-password" element={<ChangePasswordPage />} />
                 <Route
                   path="/dashboard"
