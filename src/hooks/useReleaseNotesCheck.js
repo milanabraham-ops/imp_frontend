@@ -20,10 +20,14 @@ function markSeen(version) {
 // timer either, there's no way to be pushed the moment a deploy actually lands without real server
 // infrastructure (a webhook + a live connection to every open tab), so this just checks at moments
 // that are already natural: once on load, and again whenever the tab is switched back to.
-export function useReleaseNotesCheck() {
+//
+// `enabled` is whether the caller is actually logged in, nobody should see "what's new" before
+// that, it's not relevant to an anonymous visitor on the login screen.
+export function useReleaseNotesCheck(enabled) {
   const [available, setAvailable] = useState(null)
 
   useEffect(() => {
+    if (!enabled) return undefined
     let cancelled = false
 
     async function check() {
@@ -60,15 +64,11 @@ export function useReleaseNotesCheck() {
       cancelled = true
       document.removeEventListener('visibilitychange', onVisible)
     }
-  }, [])
+  }, [enabled])
 
   function dismiss() {
     setAvailable(null)
   }
 
-  function reload() {
-    window.location.reload()
-  }
-
-  return { available, dismiss, reload }
+  return { available, dismiss }
 }

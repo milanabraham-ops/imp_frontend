@@ -1,9 +1,11 @@
 import { useReleaseNotesCheck } from '../../hooks/useReleaseNotesCheck'
 import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
 
 export default function UpdateBanner() {
   const { theme } = useTheme()
-  const { available, dismiss, reload } = useReleaseNotesCheck()
+  const { user } = useAuth()
+  const { available, dismiss } = useReleaseNotesCheck(Boolean(user))
   if (!available) return null
 
   return (
@@ -18,9 +20,6 @@ export default function UpdateBanner() {
         </ul>
       </div>
       <div className="update-banner-actions">
-        <button type="button" className="update-banner-reload" onClick={reload}>
-          Reload
-        </button>
         <button type="button" className="update-banner-dismiss" aria-label="Dismiss" onClick={dismiss}>
           <i className="ti ti-x"></i>
         </button>

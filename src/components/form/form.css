@@ -986,10 +986,6 @@ a.pms-doc-card:hover { border-color: var(--border2); box-shadow: var(--shadow); 
 .update-banner-body ul { margin: 0; padding-left: 18px; }
 .update-banner-body li { line-height: 1.5; }
 .update-banner-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.update-banner-reload {
-  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--update-accent);
-  background: var(--update-accent); color: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
-}
 .update-banner-dismiss {
   display: flex; align-items: center; justify-content: center;
   width: 26px; height: 26px; border-radius: 6px; border: none; background: none;
