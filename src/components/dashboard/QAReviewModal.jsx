@@ -173,8 +173,19 @@ export default function QAReviewModal({
 
   const label = `${submission.clientName || 'Untitled'} (${submission.locationName || 'Untitled location'})`
 
+  // Mirrors blocksQaCompletion in usePipelineActions.js, just for wording here: an error always
+  // sends this back, a clarification only does on the first pass. Either way the message now
+  // actually posts to Chat (see submissionController.js), so it shouldn't claim "complete" when
+  // it's really asking the specialist to go fix or answer something first.
+  const hasUnresolvedErrors = checklist.some((row) => row.status === 'error')
+  const hasClarifications = checklist.some((row) => row.status === 'clarification')
+  const willBlock = hasUnresolvedErrors || (hasClarifications && !submission.qaClarificationSeen)
+
   const startComposeResult = () => {
-    setResultMessage(`<users/all> QA review for *${label}* complete.\n\n${checklistSummary(checklist)}`)
+    const intro = willBlock
+      ? `<users/all> QA review for *${label}* needs changes before it can be completed.`
+      : `<users/all> QA review for *${label}* complete.`
+    setResultMessage(`${intro}\n\n${checklistSummary(checklist)}`)
     setComposingResult(true)
   }
 
@@ -358,7 +369,7 @@ export default function QAReviewModal({
                 disabled={busy || !taken}
                 onClick={startComposeResult}
               >
-                {busy ? 'Completing…' : 'Mark Complete'}
+                {busy ? 'Sending…' : willBlock ? 'Flag & Send' : 'Mark Complete'}
               </button>
             )}
           </div>
@@ -367,12 +378,12 @@ export default function QAReviewModal({
 
       <MessageComposeModal
         open={composingResult}
-        title="QA Result"
+        title={willBlock ? 'QA Result (needs rework)' : 'QA Result'}
         subtitle={`${label} · posted to the QA/specialist Chat space`}
         message={resultMessage}
         onMessageChange={setResultMessage}
         busy={busy}
-        confirmLabel="Send & Complete"
+        confirmLabel={willBlock ? 'Send' : 'Send & Complete'}
         onConfirm={confirmSendResult}
         onCancel={() => setComposingResult(false)}
       />
