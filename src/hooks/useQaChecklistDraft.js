@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { normalizeChecklistRow } from '../utils/qaChecklist'
 
 // Same "survive an unexpected logout/crash without losing work" safety net useFormDraft gives the
 // intake wizard, applied to an in-progress QA review. Keyed per-submission (not one global slot)
@@ -44,10 +45,15 @@ function isMeaningfulDraft(draftChecklist, savedChecklist) {
   if (!Array.isArray(draftChecklist) || draftChecklist.length === 0) return false
   const savedByItem = new Map((savedChecklist || []).map((row) => [row.item, row]))
   return draftChecklist.some((row) => {
-    const saved = savedByItem.get(row.item)
-    const savedStatus = saved?.status || ''
-    const savedNote = saved?.note || ''
-    return row.status !== savedStatus || row.note !== savedNote
+    const draft = normalizeChecklistRow(row)
+    const saved = normalizeChecklistRow(savedByItem.get(row.item))
+    return (
+      draft.status !== saved.status ||
+      draft.hasError !== saved.hasError ||
+      draft.errorNote !== saved.errorNote ||
+      draft.hasClarification !== saved.hasClarification ||
+      draft.clarificationNote !== saved.clarificationNote
+    )
   })
 }
 

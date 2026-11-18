@@ -464,7 +464,11 @@
 .voicestack-form .qa-checklist-choice.error.active { background: var(--danger-light); border-color: var(--danger-border); color: var(--danger); }
 .voicestack-form .qa-checklist-choice.clarification.active { background: var(--warning-light); border-color: var(--warning-border); color: var(--warning); }
 .voicestack-form .qa-checklist-choice.na.active { background: var(--bg3); border-color: var(--text3); color: var(--text2); }
-.voicestack-form .qa-checklist-note { flex-basis: 100%; min-height: 50px; font-size: 13px; }
+.voicestack-form .qa-checklist-note-group { flex-basis: 100%; }
+.voicestack-form .qa-checklist-note-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; margin-bottom: 4px; }
+.voicestack-form .qa-checklist-note-label.error { color: var(--danger); }
+.voicestack-form .qa-checklist-note-label.clarification { color: var(--warning); }
+.voicestack-form .qa-checklist-note { width: 100%; min-height: 50px; font-size: 13px; }
 .voicestack-form .qa-checklist-add-row { display: flex; gap: 8px; margin-top: 12px; }
 .voicestack-form .qa-checklist-add-row .inline-edit-input { flex: 1; min-width: 0; }
 

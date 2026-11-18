@@ -7,6 +7,7 @@ import ForwardingNumbersField from '../common/ForwardingNumbersField'
 import { QA_CHECKLIST_ITEMS } from '../../data/options'
 import { useEscapeClose } from '../../hooks/useEscapeClose'
 import { useQaChecklistDraft } from '../../hooks/useQaChecklistDraft'
+import { normalizeChecklistRow } from '../../utils/qaChecklist'
 
 function formatDate(value) {
   if (!value) return ''
@@ -16,27 +17,30 @@ function formatDate(value) {
 // Merges this account's saved checklist against the current shared template, any item added to
 // the template since this account was last reviewed shows up here too (blank, ready to review).
 // Anything the account already has that's since fallen off the template (removed/renamed) is
-// dropped rather than kept, the checklist always mirrors the current template exactly.
+// dropped rather than kept, the checklist always mirrors the current template exactly. Existing
+// rows are normalized (see utils/qaChecklist.js) so a row saved before error/clarification could
+// coexist on the same item still loads correctly, in the new shape.
 function buildChecklist(templateItems, existingChecklist) {
   const items = templateItems && templateItems.length ? templateItems : QA_CHECKLIST_ITEMS
   const existingByName = new Map((existingChecklist || []).map((row) => [row.item.toLowerCase(), row]))
   return items.map((item) => {
     const existing = existingByName.get(item.toLowerCase())
-    return existing ? { ...existing } : { item, status: '', note: '' }
+    return existing ? { ...normalizeChecklistRow(existing), item } : { item, status: '', hasError: false, errorNote: '', hasClarification: false, clarificationNote: '' }
   })
 }
 
-// Mirrors chatService.js's checklistSummary on the backend, used to seed the editable default
-// message shown before the QA result actually posts to Chat.
+// Used to seed the editable default message shown before the QA result actually posts to Chat,
+// errors and clarifications are always listed as their own separate sections so the specialist
+// can tell at a glance which items actually need fixing and which just need an answer.
 function checklistSummary(checklist) {
-  const errors = checklist.filter((row) => row.status === 'error')
-  const clarifications = checklist.filter((row) => row.status === 'clarification')
+  const errors = checklist.filter((row) => row.hasError)
+  const clarifications = checklist.filter((row) => row.hasClarification)
   if (errors.length === 0 && clarifications.length === 0) return 'No errors.'
 
-  const section = (title, items) => `${title}:\n${items.map((i) => `- ${i.item}: ${i.note || 'No detail provided'}`).join('\n')}`
+  const section = (title, items, noteKey) => `${title}:\n${items.map((i) => `- ${i.item}: ${i[noteKey] || 'No detail provided'}`).join('\n')}`
   const parts = []
-  if (errors.length > 0) parts.push(section('Errors', errors))
-  if (clarifications.length > 0) parts.push(section('Clarifications', clarifications))
+  if (errors.length > 0) parts.push(section('Errors', errors, 'errorNote'))
+  if (clarifications.length > 0) parts.push(section('Clarifications', clarifications, 'clarificationNote'))
   return parts.join('\n\n')
 }
 
@@ -109,18 +113,34 @@ export default function QAReviewModal({
 
   if (!submission) return null
 
-  const setStatus = (index, status) => {
+  // OK/N/A stay mutually exclusive with each other and clear any error/clarification flag,
+  // picking one of them means the item needs neither.
+  const toggleStatus = (index, status) => {
     setChecklist((prev) =>
       prev.map((row, i) => {
         if (i !== index) return row
         const nextStatus = row.status === status ? '' : status
-        const nextNote = nextStatus === 'error' || nextStatus === 'clarification' ? row.note : ''
-        return { ...row, status: nextStatus, note: nextNote }
+        return { ...row, status: nextStatus, hasError: false, errorNote: '', hasClarification: false, clarificationNote: '' }
       }),
     )
   }
 
-  const setNote = (index, note) => setChecklist((prev) => prev.map((row, i) => (i === index ? { ...row, note } : row)))
+  // Error and clarification are independent of each other, toggling one leaves the other alone,
+  // so the same item can be flagged with both at once. Either one clears OK/N/A, since the item
+  // isn't simply fine or not-applicable once something's been flagged on it.
+  const toggleFlag = (index, flagKey, noteKey) => {
+    setChecklist((prev) =>
+      prev.map((row, i) => {
+        if (i !== index) return row
+        const next = !row[flagKey]
+        return { ...row, status: '', [flagKey]: next, [noteKey]: next ? row[noteKey] : '' }
+      }),
+    )
+  }
+
+  const setErrorNote = (index, note) => setChecklist((prev) => prev.map((row, i) => (i === index ? { ...row, errorNote: note } : row)))
+  const setClarificationNote = (index, note) =>
+    setChecklist((prev) => prev.map((row, i) => (i === index ? { ...row, clarificationNote: note } : row)))
 
   // Previously this only removed the row from this one review's in-progress checklist state, the
   // item was still sitting in the agent's personal template underneath, so it silently came back
@@ -166,9 +186,11 @@ export default function QAReviewModal({
     }
   }
 
-  const reviewedCount = checklist.filter((row) => row.status).length
+  const reviewedCount = checklist.filter((row) => row.status || row.hasError || row.hasClarification).length
   const allReviewed = reviewedCount === checklist.length
-  const missingNotes = checklist.some((row) => (row.status === 'error' || row.status === 'clarification') && !row.note.trim())
+  const missingNotes = checklist.some(
+    (row) => (row.hasError && !row.errorNote.trim()) || (row.hasClarification && !row.clarificationNote.trim()),
+  )
   const locked = alreadyComplete || busy
 
   const label = `${submission.clientName || 'Untitled'} (${submission.locationName || 'Untitled location'})`
@@ -177,8 +199,8 @@ export default function QAReviewModal({
   // sends this back, a clarification only does on the first pass. Either way the message now
   // actually posts to Chat (see submissionController.js), so it shouldn't claim "complete" when
   // it's really asking the specialist to go fix or answer something first.
-  const hasUnresolvedErrors = checklist.some((row) => row.status === 'error')
-  const hasClarifications = checklist.some((row) => row.status === 'clarification')
+  const hasUnresolvedErrors = checklist.some((row) => row.hasError)
+  const hasClarifications = checklist.some((row) => row.hasClarification)
   const willBlock = hasUnresolvedErrors || (hasClarifications && !submission.qaClarificationSeen)
 
   const startComposeResult = () => {
@@ -257,27 +279,27 @@ export default function QAReviewModal({
                     title="No error"
                     aria-label="No error"
                     disabled={locked}
-                    onClick={() => setStatus(i, 'ok')}
+                    onClick={() => toggleStatus(i, 'ok')}
                   >
                     <i className="ti ti-check"></i>
                   </button>
                   <button
                     type="button"
-                    className={`qa-checklist-choice clarification${row.status === 'clarification' ? ' active' : ''}`}
+                    className={`qa-checklist-choice clarification${row.hasClarification ? ' active' : ''}`}
                     title="Clarification needed"
                     aria-label="Clarification needed"
                     disabled={locked}
-                    onClick={() => setStatus(i, 'clarification')}
+                    onClick={() => toggleFlag(i, 'hasClarification', 'clarificationNote')}
                   >
                     <i className="ti ti-help-circle"></i>
                   </button>
                   <button
                     type="button"
-                    className={`qa-checklist-choice error${row.status === 'error' ? ' active' : ''}`}
+                    className={`qa-checklist-choice error${row.hasError ? ' active' : ''}`}
                     title="Error"
                     aria-label="Error"
                     disabled={locked}
-                    onClick={() => setStatus(i, 'error')}
+                    onClick={() => toggleFlag(i, 'hasError', 'errorNote')}
                   >
                     <i className="ti ti-x"></i>
                   </button>
@@ -287,7 +309,7 @@ export default function QAReviewModal({
                     title="Not applicable"
                     aria-label="Not applicable"
                     disabled={locked}
-                    onClick={() => setStatus(i, 'na')}
+                    onClick={() => toggleStatus(i, 'na')}
                   >
                     <i className="ti ti-minus"></i>
                   </button>
@@ -304,14 +326,29 @@ export default function QAReviewModal({
                     </button>
                   )}
                 </div>
-                {(row.status === 'error' || row.status === 'clarification') && (
-                  <textarea
-                    className="qa-checklist-note"
-                    value={row.note}
-                    disabled={locked}
-                    placeholder={row.status === 'error' ? 'What exactly is wrong?' : 'What needs clarifying?'}
-                    onChange={(e) => setNote(i, e.target.value)}
-                  />
+                {row.hasClarification && (
+                  <div className="qa-checklist-note-group">
+                    {row.hasError && <div className="qa-checklist-note-label clarification">Clarification</div>}
+                    <textarea
+                      className="qa-checklist-note"
+                      value={row.clarificationNote}
+                      disabled={locked}
+                      placeholder="What needs clarifying?"
+                      onChange={(e) => setClarificationNote(i, e.target.value)}
+                    />
+                  </div>
+                )}
+                {row.hasError && (
+                  <div className="qa-checklist-note-group">
+                    {row.hasClarification && <div className="qa-checklist-note-label error">Error</div>}
+                    <textarea
+                      className="qa-checklist-note"
+                      value={row.errorNote}
+                      disabled={locked}
+                      placeholder="What exactly is wrong?"
+                      onChange={(e) => setErrorNote(i, e.target.value)}
+                    />
+                  </div>
                 )}
               </div>
               )

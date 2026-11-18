@@ -5,6 +5,7 @@ import { useToast } from '../../context/ToastContext'
 import { useNotifications } from '../../context/NotificationContext'
 import { isMine } from '../../lib/isMine'
 import { normalize, isInQaDomain, canDrag as canDragCard } from './pipelineHelpers'
+import { normalizeChecklistRow } from '../../utils/qaChecklist'
 
 // Every mutation a pipeline card can trigger — take-over/reassign, status/onboarding changes,
 // the QA handoff/completion/handover modals, and the drag-drop rules that decide what a card
@@ -141,8 +142,8 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
   // outstanding), it's a question for whoever configured the account to answer, not a defect that
   // needs re-verifying forever, once it's been through one round it shouldn't keep blocking.
   const blocksQaCompletion = (checklist, submission) => {
-    const hasErrors = checklist.some((row) => row.status === 'error')
-    const hasClarifications = checklist.some((row) => row.status === 'clarification')
+    const hasErrors = checklist.some((row) => normalizeChecklistRow(row).hasError)
+    const hasClarifications = checklist.some((row) => normalizeChecklistRow(row).hasClarification)
     return hasErrors || (hasClarifications && !submission.qaClarificationSeen)
   }
 
@@ -194,9 +195,9 @@ export function usePipelineActions({ submissions, setSubmissions, user, canActAs
     // ever required it to have been through one round, see blocksQaCompletion above, not that it
     // got resolved), carried into this message so the POC sees it too, not just whoever was in
     // the QA/specialist Chat space when it was first raised.
-    const clarifications = (s.qaChecklist || []).filter((row) => row.status === 'clarification')
+    const clarifications = (s.qaChecklist || []).map(normalizeChecklistRow).filter((row) => row.hasClarification)
     const clarificationsBlock = clarifications.length
-      ? `\n\nClarifications:\n${clarifications.map((row) => `- ${row.item}: ${row.note || 'No detail provided'}`).join('\n')}`
+      ? `\n\nClarifications:\n${clarifications.map((row) => `- ${row.item}: ${row.clarificationNote || 'No detail provided'}`).join('\n')}`
       : ''
     // Tags the actual POC who submitted this if their Chat ID is on file (see AdminUsers.jsx >
     // Manage Access); otherwise falls back to pinging the whole POC space, same as before.
