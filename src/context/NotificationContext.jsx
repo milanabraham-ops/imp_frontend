@@ -18,7 +18,7 @@ const CATEGORIES = [
   'newIntegration',
   'integrationComplete',
 ]
-const POLL_MS = 5000
+const POLL_MS = 30000
 
 function mapOf(fn) {
   return Object.fromEntries(CATEGORIES.map((cat) => [cat, fn()]))
@@ -174,70 +174,86 @@ export function NotificationProvider({ children }) {
   useEffect(() => {
     if (!user) return
     let cancelled = false
+    let timer = null
+    // Consecutive failed polls (network error, or a non-ok response, most importantly a 429 from
+    // an edge-level block, see useBackendStatus.js), backed off below instead of retrying at the
+    // same flat 5s forever, every tab doing that into an active block is exactly what keeps it
+    // going, this is the one poll in the app that never stops for as long as a tab is open.
+    let failures = 0
 
     async function poll() {
+      let ok = false
       try {
         // A dedicated minimal-field endpoint (see backend notificationController.feed) rather than
         // the full GET /submissions + GET /groups every board page already polls, this runs
         // globally, once per open tab, independent of whatever page is on screen, so it doesn't
         // need (or want) the full documents those pages fetch for themselves.
         const res = await apiFetch(`${API_URL}/notifications/feed`)
-        if (!res.ok || cancelled) return
-        const body = await res.json()
-        const submissions = Array.isArray(body.submissions) ? body.submissions : []
-        const groups = Array.isArray(body.groups) ? body.groups : []
-        const events = relevantEvents(submissions, groups, user.role, user.id)
+        if (cancelled) return
+        if (res.ok) {
+          ok = true
+          const body = await res.json()
+          const submissions = Array.isArray(body.submissions) ? body.submissions : []
+          const groups = Array.isArray(body.groups) ? body.groups : []
+          const events = relevantEvents(submissions, groups, user.role, user.id)
 
-        const state = stateRef.current
-        // Each category baselines itself independently, once, the first time it's ever polled,
-        // whatever already exists is "already seen", so shipping this doesn't retroactively
-        // alert (or toast) on old history. Anything that shows up after that is real.
-        for (const cat of CATEGORIES) {
-          if (!state.baselined[cat]) {
-            state.baselined[cat] = true
-            for (const e of events[cat]) {
-              if (state.seen[cat][e.id] === undefined) state.seen[cat][e.id] = e.at
+          const state = stateRef.current
+          // Each category baselines itself independently, once, the first time it's ever polled,
+          // whatever already exists is "already seen", so shipping this doesn't retroactively
+          // alert (or toast) on old history. Anything that shows up after that is real.
+          for (const cat of CATEGORIES) {
+            if (!state.baselined[cat]) {
+              state.baselined[cat] = true
+              for (const e of events[cat]) {
+                if (state.seen[cat][e.id] === undefined) state.seen[cat][e.id] = e.at
+              }
             }
           }
-        }
-        saveState(user.id, state)
+          saveState(user.id, state)
 
-        const nextBadges = {}
-        const nextIds = {}
-        let playSound = false
-        const isFirstPoll = isFirstPollRef.current
-        for (const cat of CATEGORIES) {
-          const seenMap = state.seen[cat]
-          const unseen = events[cat].filter((e) => new Date(e.at) > new Date(seenMap[e.id] || 0))
-          nextBadges[cat] = unseen.length > 0
-          nextIds[cat] = new Set(unseen.map((e) => e.id))
-          const unalerted = unseen.filter((e) => !alertedRef.current.has(`${cat}:${e.id}:${e.at}`))
-          if (unalerted.length > 0) {
-            unalerted.forEach((e) => {
-              alertedRef.current.add(`${cat}:${e.id}:${e.at}`)
-              // Badges above still reflect this regardless, only the toast+sound burst is
-              // skipped for whatever was already sitting there before this session started.
-              if (!isFirstPoll) showToast(e.message, 'info')
-            })
-            if (!isFirstPoll) playSound = true
+          const nextBadges = {}
+          const nextIds = {}
+          let playSound = false
+          const isFirstPoll = isFirstPollRef.current
+          for (const cat of CATEGORIES) {
+            const seenMap = state.seen[cat]
+            const unseen = events[cat].filter((e) => new Date(e.at) > new Date(seenMap[e.id] || 0))
+            nextBadges[cat] = unseen.length > 0
+            nextIds[cat] = new Set(unseen.map((e) => e.id))
+            const unalerted = unseen.filter((e) => !alertedRef.current.has(`${cat}:${e.id}:${e.at}`))
+            if (unalerted.length > 0) {
+              unalerted.forEach((e) => {
+                alertedRef.current.add(`${cat}:${e.id}:${e.at}`)
+                // Badges above still reflect this regardless, only the toast+sound burst is
+                // skipped for whatever was already sitting there before this session started.
+                if (!isFirstPoll) showToast(e.message, 'info')
+              })
+              if (!isFirstPoll) playSound = true
+            }
           }
-        }
-        isFirstPollRef.current = false
-        if (!cancelled) {
-          setBadges(nextBadges)
-          setUnseenIds(nextIds)
-          if (playSound) playNotificationSound()
+          isFirstPollRef.current = false
+          if (!cancelled) {
+            setBadges(nextBadges)
+            setUnseenIds(nextIds)
+            if (playSound) playNotificationSound()
+          }
         }
       } catch {
         // A missed poll just means the badge waits for the next one, not worth surfacing.
       }
+      if (cancelled) return
+      failures = ok ? 0 : failures + 1
+      // Doubling, capped at a minute, means a block gets maybe a dozen requests while it's active
+      // instead of one every 5s for however long it lasts, back to the normal cadence the moment a
+      // poll actually succeeds again.
+      const delay = ok ? POLL_MS : Math.min(POLL_MS * 2 ** failures, 60000)
+      timer = setTimeout(poll, delay)
     }
 
     poll()
-    const interval = setInterval(poll, POLL_MS)
     return () => {
       cancelled = true
-      clearInterval(interval)
+      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
