@@ -177,7 +177,7 @@ export default function QAReviewModal({
     setAddItemError('')
     try {
       await onAddTemplateItem(name)
-      setChecklist((prev) => [...prev, { item: name, status: '', note: '' }])
+      setChecklist((prev) => [...prev, { item: name, status: '', hasError: false, errorNote: '', hasClarification: false, clarificationNote: '' }])
       setNewItem('')
     } catch (err) {
       setAddItemError(err.message || 'Failed to add item')
